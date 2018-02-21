@@ -1,0 +1,5 @@
+---
+- name: reload ldconfig
+  command: ldconfig
+  become: yes
+  

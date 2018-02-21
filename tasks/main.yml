@@ -1,0 +1,40 @@
+---
+- include: check_vars.yml
+- include: dependencies.yml
+
+# ----------------------------------
+# lame
+# ----------------------------------
+- name: check if lame installed
+  command: "which {{ lame_install_dir }}/lame"
+  register: lame_exists
+  ignore_errors: yes
+  changed_when: False
+
+- include: install_lame.yml
+  when: lame_exists.rc != 0 
+ 
+# ----------------------------------
+# libmad
+# ----------------------------------
+- name: check if libmad installed
+  stat:
+    path: "{{ libmad_install_dir }}/libmad.a"
+  register: libmad_exists
+  ignore_errors: yes
+  changed_when: False
+
+- include: install_libmad.yml
+  when: libmad_exists.stat.exists == False
+  
+# ----------------------------------
+# sox
+# ----------------------------------
+- name: check if sox installed
+  command: "which {{ sox_install_dir }}/sox"
+  register: sox_exists
+  ignore_errors: yes
+  changed_when: False
+
+- include: install_sox.yml
+  when: sox_exists.rc != 0

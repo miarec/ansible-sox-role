@@ -1,0 +1,11 @@
+# Checksum of source code packages
+# Calculated with "sha1sum FILE"
+
+libmad_checksums:
+  0.15.1b: cac19cd00e1a907f3150cc040ccc077783496d76 
+  
+lame_checksums:
+  3.99.5: 03a0bfa85713adcc6b3383c12e2cc68a9cfbf4c4
+  
+sox_checksums:
+  14.4.2: f69f38f8a7ad6a88ecab3862d74db4edcd796695   

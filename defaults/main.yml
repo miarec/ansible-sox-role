@@ -1,0 +1,34 @@
+---
+## Installation options 
+sox_version: 14.4.2
+libmad_version: 0.15.1b
+lame_version: 3.99.5
+
+sox_download_url: "https://downloads.sourceforge.net/project/sox/sox/{{ sox_version }}/sox-{{ sox_version }}.tar.gz" 
+libmad_download_url: "https://downloads.sourceforge.net/project/mad/libmad/{{ libmad_version }}/libmad-{{ libmad_version }}.tar.gz"
+
+# Translate full lame_version (3.99.5) to the MAJOR.MINOR value, like "3.99"
+lame_download_url: "https://downloads.sourceforge.net/project/lame/lame/{{ lame_version|regex_replace('(\\d+\\.\\d+)\\..*$', '\\1') }}/lame-{{ lame_version }}.tar.gz"
+
+sox_verify_checksum: true
+libmad_verify_checksum: true
+lame_verify_checksum: true
+
+sox_download_dir: /tmp 
+libmad_download_dir: /tmp 
+lame_download_dir: /tmp 
+
+sox_install_dir: /usr/local/bin
+lame_install_dir: /usr/local/bin
+libmad_install_dir: /usr/local/lib
+
+# whether or not to delete the downloaded source code. By setting it
+# to false and using a custom var for `sox_download_dir` a kind of
+# local caching can be achieved.
+sox_cleanup_downloads: yes
+libmad_cleanup_downloads: yes
+lame_cleanup_downloads: yes
+
+# If true, the python source for the version will be downloaded and
+# installed again even if it's found on the system.
+sox_force_install: no

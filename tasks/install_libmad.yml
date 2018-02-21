@@ -1,0 +1,93 @@
+---
+# get_url on Ansible 1.x only supports sha256 checksumming, so we're only
+# using `libmad_checksums` on Ansible 2.x because they're sha1.
+- name: set libmad checksum
+  set_fact:
+    libmad_checksum: "sha1:{{ libmad_checksums[libmad_version] }}"
+  when:
+    - libmad_verify_checksum|bool
+    - libmad_checksum is not defined
+    - libmad_version in libmad_checksums
+    - ansible_version.major >= 2
+
+- name: download libmad (ansible 1.x)
+  get_url:
+    url: "{{ libmad_download_url }}"
+    dest: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}.tar.gz"
+    sha256sum: "{{ libmad_checksum|default(omit) }}"
+  when:
+    - ansible_version.major < 2
+
+- name: download libmad (ansible 2.x)
+  get_url:
+    url: "{{ libmad_download_url }}"
+    dest: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}.tar.gz"
+    checksum: "{{ libmad_checksum|default(omit) }}"
+  when:
+    - ansible_version.major >= 2
+
+- name: extract libmad tarball
+  unarchive:
+    src: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}.tar.gz"
+    dest: "{{ libmad_download_dir }}"
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/configure"
+    copy: no
+
+# create NEWS, AUTHORS and ChangeLog. These files are requires for "autoreconf -i" command    
+- name: Create NEWS file
+  command: "touch {{ libmad_download_dir }}/libmad-{{ libmad_version }}/NEWS"
+  args:
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/NEWS"
+
+- name: Create AUTHORS file
+  command: "touch {{ libmad_download_dir }}/libmad-{{ libmad_version }}/AUTHORS"
+  args:
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/AUTHORS"
+
+- name: Create ChangeLog file
+  command: "touch {{ libmad_download_dir }}/libmad-{{ libmad_version }}/ChangeLog"
+  args:
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/ChangeLog"
+
+# Patch configure.ac because libmad is using -fforce-mem option that has been removed in GCC 4.3
+- name: Patch configure.ac
+  patch:
+    src: files/libmad-0.15.1b-fixes-1.patch
+    dest: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/configure.ac"
+    
+- name: Run autoreconf 
+  command: autoreconf -fi
+  args:
+    chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/libtool"
+    
+- name: Run configure 
+  command: ./configure --disable-shared
+  args:
+    chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/Makefile"
+
+- name: Run make
+  command: make -j{{ ansible_processor_cores + 1 }}
+  args:
+    chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/libmad"
+
+- name: Run make install
+  command: make install
+  args:
+    chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
+    creates: "{{ libmad_install_dir }}/mad"
+  notify:
+    - reload ldconfig
+ 
+- name: Clean up the source files
+  file: 
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ libmad_download_dir }}/libmad-{{ libmad_version }}.tar.gz"
+    - "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
+  when: libmad_cleanup_downloads|bool 
+  
+ 
