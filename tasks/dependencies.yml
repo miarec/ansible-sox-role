@@ -12,9 +12,8 @@
     - autoconf
     - automake
     - libtool
-    - libid3tag
-    - libid3tag-dev
-    - flac-dev
+    - libid3tag0-dev
+    - libflac-dev
     - patch
   when: ansible_os_family == "Debian"
 
