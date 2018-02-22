@@ -12,8 +12,6 @@
     - autoconf
     - automake
     - libtool
-    - libid3tag0-dev
-    - libflac-dev
     - patch
   when: ansible_os_family == "Debian"
 
@@ -28,9 +26,6 @@
     - autoconf
     - automake
     - libtool 
-    - libid3tag
-    - libid3tag-devel
-    - flac-devel
     - patch
   when: ansible_os_family == "RedHat"
 

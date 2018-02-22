@@ -71,13 +71,13 @@
   command: make -j{{ ansible_processor_cores + 1 }}
   args:
     chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
-    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/libmad"
+    creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/.libs/libmad.a"
 
 - name: Run make install
   command: make install
   args:
     chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
-    creates: "{{ libmad_install_dir }}/mad"
+    creates: "{{ libmad_install_dir }}/libmad.a"
   notify:
     - reload ldconfig
  

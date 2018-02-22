@@ -1,0 +1,65 @@
+---
+# get_url on Ansible 1.x only supports sha256 checksumming, so we're only
+# using `libogg_checksums` on Ansible 2.x because they're sha1.
+- name: set libogg checksum
+  set_fact:
+    libogg_checksum: "sha1:{{ libogg_checksums[libogg_version] }}"
+  when:
+    - libogg_verify_checksum|bool
+    - libogg_checksum is not defined
+    - libogg_version in libogg_checksums
+    - ansible_version.major >= 2
+
+- name: download libogg (ansible 1.x)
+  get_url:
+    url: "{{ libogg_download_url }}"
+    dest: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}.tar.gz"
+    sha256sum: "{{ libogg_checksum|default(omit) }}"
+  when:
+    - ansible_version.major < 2
+
+- name: download libogg (ansible 2.x)
+  get_url:
+    url: "{{ libogg_download_url }}"
+    dest: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}.tar.gz"
+    checksum: "{{ libogg_checksum|default(omit) }}"
+  when:
+    - ansible_version.major >= 2
+
+- name: extract libogg tarball
+  unarchive:
+    src: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}.tar.gz"
+    dest: "{{ libogg_download_dir }}"
+    creates: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}/configure"
+    copy: no
+
+- name: Run configure 
+  command: ./configure --disable-shared
+  args:
+    chdir: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}"
+    creates: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}/Makefile"
+
+- name: Run make
+  command: make -j{{ ansible_processor_cores + 1 }}
+  args:
+    chdir: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}"
+    creates: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}/.libs/libogg.a"
+
+- name: Run make install
+  command: make install
+  args:
+    chdir: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}"
+    creates: "{{ libogg_install_dir }}/libogg.a"
+  notify:
+    - reload ldconfig
+ 
+- name: Clean up the source files
+  file: 
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ libogg_download_dir }}/libogg-{{ libogg_version }}.tar.gz"
+    - "{{ libogg_download_dir }}/libogg-{{ libogg_version }}"
+  when: libogg_cleanup_downloads|bool 
+  
+ 

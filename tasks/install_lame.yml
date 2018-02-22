@@ -43,13 +43,13 @@
   command: make -j{{ ansible_processor_cores + 1 }}
   args:
     chdir: "{{ lame_download_dir }}/lame-{{ lame_version }}"
-    creates: "{{ lame_download_dir }}/lame-{{ lame_version }}/lame"
+    creates: "{{ lame_download_dir }}/lame-{{ lame_version }}/libmp3lame/.libs/libmp3lame.a"
 
 - name: Run make install
   command: make install
   args:
     chdir: "{{ lame_download_dir }}/lame-{{ lame_version }}"
-    creates: "{{ lame_install_dir }}/lame"
+    creates: "{{ lame_install_dir }}/libmp3lame.a"
   notify:
     - reload ldconfig
  

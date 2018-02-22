@@ -6,13 +6,14 @@
 # lame
 # ----------------------------------
 - name: check if lame installed
-  command: "which {{ lame_install_dir }}/lame"
+  stat:
+    path: "{{ lame_install_dir }}/libmp3lame.a"
   register: lame_exists
   ignore_errors: yes
   changed_when: False
 
 - include: install_lame.yml
-  when: lame_exists.rc != 0 
+  when: lame_exists.stat.exists == False
  
 # ----------------------------------
 # libmad
@@ -26,6 +27,33 @@
 
 - include: install_libmad.yml
   when: libmad_exists.stat.exists == False
+
+# ----------------------------------
+# libogg
+# ----------------------------------
+- name: check if libogg installed
+  stat:
+    path: "{{ libogg_install_dir }}/libogg.a"
+  register: libogg_exists
+  ignore_errors: yes
+  changed_when: False
+
+- include: install_libogg.yml
+  when: libogg_exists.stat.exists == False
+
+# ----------------------------------
+# flac
+# ----------------------------------
+- name: check if libFLAC installed
+  stat:
+    path: "{{ flac_install_dir }}/libFLAC.a"
+  register: flac_exists
+  ignore_errors: yes
+  changed_when: False
+
+- include: install_flac.yml
+  when: flac_exists.stat.exists == False
+  
   
 # ----------------------------------
 # sox
