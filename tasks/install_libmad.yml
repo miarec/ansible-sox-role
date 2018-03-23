@@ -80,6 +80,7 @@
     creates: "{{ libmad_install_dir }}/libmad.a"
   notify:
     - reload ldconfig
+  become: yes
  
 - name: Clean up the source files
   file: 

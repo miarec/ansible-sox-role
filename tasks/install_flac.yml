@@ -52,6 +52,7 @@
     creates: "{{ flac_install_dir }}/libFLAC.a"
   notify:
     - reload ldconfig
+  become: yes
  
 - name: Clean up the source files
   file: 

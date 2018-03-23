@@ -52,6 +52,7 @@
     creates: "{{ sox_install_dir }}/sox"
   notify:
     - reload ldconfig
+  become: yes
  
 - name: Clean up the source files
   file: 

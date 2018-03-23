@@ -1,6 +1,8 @@
 ---
 - include: check_vars.yml
+
 - include: dependencies.yml
+  become: yes
 
 # ----------------------------------
 # lame

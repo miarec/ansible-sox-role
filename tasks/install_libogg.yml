@@ -52,6 +52,7 @@
     creates: "{{ libogg_install_dir }}/libogg.a"
   notify:
     - reload ldconfig
+  become: yes
  
 - name: Clean up the source files
   file: 
