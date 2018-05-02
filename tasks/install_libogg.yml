@@ -34,7 +34,7 @@
     copy: no
 
 - name: Run configure 
-  command: ./configure --disable-shared
+  command: ./configure
   args:
     chdir: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}"
     creates: "{{ libogg_download_dir }}/libogg-{{ libogg_version }}/Makefile"

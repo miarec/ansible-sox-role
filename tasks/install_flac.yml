@@ -34,7 +34,7 @@
     copy: no
 
 - name: Run configure 
-  command: ./configure --disable-shared
+  command: ./configure
   args:
     chdir: "{{ flac_download_dir }}/flac-{{ flac_version }}"
     creates: "{{ flac_download_dir }}/flac-{{ flac_version }}/Makefile"

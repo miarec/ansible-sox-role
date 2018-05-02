@@ -34,7 +34,7 @@
     copy: no
 
 - name: Run configure 
-  command: ./configure --bindir="{{ lame_install_dir }}" --disable-shared --enable-nasm
+  command: ./configure --bindir="{{ lame_install_dir }}" --enable-nasm
   args:
     chdir: "{{ lame_download_dir }}/lame-{{ lame_version }}"
     creates: "{{ lame_download_dir }}/lame-{{ lame_version }}/Makefile"

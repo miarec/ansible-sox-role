@@ -62,7 +62,7 @@
     creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/libtool"
     
 - name: Run configure 
-  command: ./configure --disable-shared
+  command: ./configure
   args:
     chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
     creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/Makefile"

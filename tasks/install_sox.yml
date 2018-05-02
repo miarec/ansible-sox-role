@@ -34,7 +34,7 @@
     copy: no
 
 - name: Run configure 
-  command: ./configure --bindir="{{ sox_install_dir }}" --disable-shared
+  command: ./configure --bindir="{{ sox_install_dir }}" --with-flac --with-mp3
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
