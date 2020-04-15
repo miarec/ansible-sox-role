@@ -1,9 +1,18 @@
 ---
 - include: check_vars.yml
 
+- name: check if sox installed
+  command: "which {{ sox_install_dir }}/sox"
+  register: sox_exists
+  ignore_errors: yes
+  changed_when: False
+  
+
 - include: dependencies.yml
   become: yes
+  when: sox_exists.rc != 0
 
+  
 # ----------------------------------
 # lame
 # ----------------------------------
@@ -13,10 +22,12 @@
   register: lame_exists
   ignore_errors: yes
   changed_when: False
+  when: sox_exists.rc != 0
 
 - include: install_lame.yml
-  when: lame_exists.stat.exists == False
- 
+  when: sox_exists.rc != 0 and lame_exists.stat.exists == False
+
+  
 # ----------------------------------
 # libmad
 # ----------------------------------
@@ -26,10 +37,12 @@
   register: libmad_exists
   ignore_errors: yes
   changed_when: False
+  when: sox_exists.rc != 0
 
 - include: install_libmad.yml
-  when: libmad_exists.stat.exists == False
+  when: sox_exists.rc != 0 and libmad_exists.stat.exists == False
 
+  
 # ----------------------------------
 # libogg
 # ----------------------------------
@@ -39,32 +52,28 @@
   register: libogg_exists
   ignore_errors: yes
   changed_when: False
+  when: sox_exists.rc != 0
 
 - include: install_libogg.yml
-  when: libogg_exists.stat.exists == False
+  when: sox_exists.rc != 0 and libogg_exists.stat.exists == False
 
+  
 # ----------------------------------
 # flac
 # ----------------------------------
 - name: check if libFLAC installed
   stat:
-    path: "{{ flac_install_dir }}/libFLAC.a"
+    path: "{{ flac_install_dir }}/libFLAC.so"
   register: flac_exists
   ignore_errors: yes
   changed_when: False
+  when: sox_exists.rc != 0
 
 - include: install_flac.yml
-  when: flac_exists.stat.exists == False
-  
+  when: sox_exists.rc != 0 and flac_exists.stat.exists == False
   
 # ----------------------------------
-# sox
+# Sox
 # ----------------------------------
-- name: check if sox installed
-  command: "which {{ sox_install_dir }}/sox"
-  register: sox_exists
-  ignore_errors: yes
-  changed_when: False
-
 - include: install_sox.yml
   when: sox_exists.rc != 0

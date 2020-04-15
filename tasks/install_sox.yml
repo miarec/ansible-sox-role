@@ -1,6 +1,4 @@
 ---
-# get_url on Ansible 1.x only supports sha256 checksumming, so we're only
-# using `sox_checksums` on Ansible 2.x because they're sha1.
 - name: set sox checksum
   set_fact:
     sox_checksum: "sha1:{{ sox_checksums[sox_version] }}"
@@ -8,23 +6,12 @@
     - sox_verify_checksum|bool
     - sox_checksum is not defined
     - sox_version in sox_checksums
-    - ansible_version.major >= 2
 
-- name: download sox (ansible 1.x)
-  get_url:
-    url: "{{ sox_download_url }}"
-    dest: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
-    sha256sum: "{{ sox_checksum|default(omit) }}"
-  when:
-    - ansible_version.major < 2
-
-- name: download sox (ansible 2.x)
+- name: download sox
   get_url:
     url: "{{ sox_download_url }}"
     dest: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     checksum: "{{ sox_checksum|default(omit) }}"
-  when:
-    - ansible_version.major >= 2
 
 - name: extract sox tarball
   unarchive:
@@ -33,19 +20,19 @@
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/configure"
     copy: no
 
-- name: Run configure 
+- name: Run configure | sox
   command: ./configure --bindir="{{ sox_install_dir }}" --with-flac --with-mp3
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
 
-- name: Run make
+- name: Run make | sox
   command: make -j{{ ansible_processor_cores + 1 }}
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/src/sox"
 
-- name: Run make install
+- name: Run make install | sox
   command: make install
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
@@ -54,7 +41,7 @@
     - reload ldconfig
   become: yes
  
-- name: Clean up the source files
+- name: Clean up the source files | sox
   file: 
     path: "{{ item }}"
     state: absent
