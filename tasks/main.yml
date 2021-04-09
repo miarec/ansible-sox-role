@@ -6,6 +6,7 @@
   register: sox_exists
   ignore_errors: yes
   changed_when: False
+  failed_when: False
   
 
 - include: dependencies.yml
@@ -22,6 +23,7 @@
   register: lame_exists
   ignore_errors: yes
   changed_when: False
+  failed_when: False
   when: sox_exists.rc != 0
 
 - include: install_lame.yml
@@ -37,6 +39,7 @@
   register: libmad_exists
   ignore_errors: yes
   changed_when: False
+  failed_when: False
   when: sox_exists.rc != 0
 
 - include: install_libmad.yml
@@ -67,6 +70,7 @@
   register: flac_exists
   ignore_errors: yes
   changed_when: False
+  failed_when: False
   when: sox_exists.rc != 0
 
 - include: install_flac.yml
