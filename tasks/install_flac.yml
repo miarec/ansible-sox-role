@@ -18,7 +18,7 @@
     src: "{{ flac_download_dir }}/flac-{{ flac_version }}.tar.xz"
     dest: "{{ flac_download_dir }}"
     creates: "{{ flac_download_dir }}/flac-{{ flac_version }}/configure"
-    copy: no
+    copy: false
 
 - name: Run configure  | flac
   command: ./configure
@@ -39,15 +39,13 @@
     creates: "{{ flac_install_dir }}/libFLAC.so"
   notify:
     - reload ldconfig
-  become: yes
- 
+  become: true
+
 - name: Clean up the source files | flac
-  file: 
+  file:
     path: "{{ item }}"
     state: absent
   with_items:
     - "{{ flac_download_dir }}/flac-{{ flac_version }}.tar.xz"
     - "{{ flac_download_dir }}/flac-{{ flac_version }}"
   when: flac_cleanup_downloads|bool
-  
- 
