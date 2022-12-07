@@ -1,0 +1,41 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Install prerequisites
+      block:
+        - name: Update apt cache
+          apt:
+            update_cache: true
+            cache_valid_time: 600
+          changed_when: false
+          when: ansible_os_family == "Debian"
+
+        - name: Install packages Debian
+          apt:
+            name: unzip
+            state: present
+          when: ansible_os_family == "Debian"
+
+        - name: Install packages RedHat
+          yum:
+            name: unzip
+            state: present
+          when: ansible_os_family == "RedHat"
+      tags:
+        - prereqs
+    - set_fact:
+        sox_download_url: "https://miarec-download.s3.amazonaws.com/sox-{{ sox_version }}.tar.gz"
+        libmad_download_url: "https://miarec-download.s3.amazonaws.com/libmad-{{ libmad_version }}.tar.gz"
+        libogg_download_url: "https://miarec-download.s3.amazonaws.com/libogg-{{ libogg_version }}.tar.gz"
+        flac_download_url: "https://miarec-download.s3.amazonaws.com/flac-{{ flac_version }}.tar.xz"
+        lame_download_url: "https://miarec-download.s3.amazonaws.com/lame-{{ lame_version }}.tar.gz"
+
+  roles:
+    - role: ansible-role-sox
+      tags:
+        - sox
+
+
