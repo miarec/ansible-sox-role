@@ -8,11 +8,9 @@
   changed_when: false
   failed_when: false
 
-
 - include: dependencies.yml
   become: true
   when: sox_exists.rc != 0
-
 
 # ----------------------------------
 # lame

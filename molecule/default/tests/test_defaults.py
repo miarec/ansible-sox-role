@@ -4,17 +4,18 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
-
-def test_directories(host):
-    dirs = [
+def test_bin(host):
+    bins = [
         "/usr/local/bin/sox",
-        "/usr/local/bin/libFLAC.so",
-        "/usr/local/bin/libmp3lame.a",
-        "/usr/local/bin/libmad.a",
-        "/usr/local/bin/libogg.a",
+        "/usr/local/bin/flac",
+        "/usr/local/bin/metaflac",
     ]
-    for dir in dirs:
-        d = host.file(dir)
-        assert d.is_directory
-        assert d.exists
+    for bin in bins:
+        b = host.file(bin)
+        assert b.exists
+        assert b.is_file
+
+def test_command(host):
+    # Run and check specific status codes in one step
+    host.run_expect([0], "sox --version")
 

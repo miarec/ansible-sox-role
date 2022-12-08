@@ -13,17 +13,6 @@
           changed_when: false
           when: ansible_os_family == "Debian"
 
-        - name: Install packages Debian
-          apt:
-            name: unzip
-            state: present
-          when: ansible_os_family == "Debian"
-
-        - name: Install packages RedHat
-          yum:
-            name: unzip
-            state: present
-          when: ansible_os_family == "RedHat"
       tags:
         - prereqs
     - set_fact:
@@ -34,6 +23,6 @@
         lame_download_url: "https://miarec-download.s3.amazonaws.com/lame-{{ lame_version }}.tar.gz"
 
   roles:
-    - role: ansible-role-sox
+    - role: ansible-sox-role
       tags:
         - sox
