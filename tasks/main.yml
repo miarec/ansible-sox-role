@@ -1,83 +1,98 @@
 ---
-- include: check_vars.yml
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    - "../vars/{{ ansible_distribution }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
 
-- name: check if sox installed
-  command: "which {{ sox_install_dir }}/sox"
-  register: sox_exists
-  ignore_errors: yes
-  changed_when: False
-  failed_when: False
-  
+# Install Sox and libraries from package when enabled
+- include : install_package.yml
+  become: true
+  when: not sox_install_from_source
 
-- include: dependencies.yml
-  become: yes
-  when: sox_exists.rc != 0
+# Install Sox and libraries from source when enabled
+- name: Install from Source
+  block:
 
-  
-# ----------------------------------
-# lame
-# ----------------------------------
-- name: check if lame installed
-  stat:
-    path: "{{ lame_install_dir }}/libmp3lame.a"
-  register: lame_exists
-  ignore_errors: yes
-  changed_when: False
-  failed_when: False
-  when: sox_exists.rc != 0
+  - include: check_vars.yml
 
-- include: install_lame.yml
-  when: sox_exists.rc != 0 and lame_exists.stat.exists == False
+  - name: check if sox installed
+    command: "which {{ sox_install_dir }}/sox"
+    register: sox_exists
+    ignore_errors: yes
+    changed_when: False
+    failed_when: False
 
-  
-# ----------------------------------
-# libmad
-# ----------------------------------
-- name: check if libmad installed
-  stat:
-    path: "{{ libmad_install_dir }}/libmad.a"
-  register: libmad_exists
-  ignore_errors: yes
-  changed_when: False
-  failed_when: False
-  when: sox_exists.rc != 0
+  - include: dependencies.yml
+    become: yes
+    when: sox_exists.rc != 0
 
-- include: install_libmad.yml
-  when: sox_exists.rc != 0 and libmad_exists.stat.exists == False
+  # ----------------------------------
+  # lame
+  # ----------------------------------
+  - name: check if lame installed
+    stat:
+      path: "{{ lame_install_dir }}/libmp3lame.a"
+    register: lame_exists
+    ignore_errors: yes
+    changed_when: False
+    failed_when: False
+    when: sox_exists.rc != 0
 
-  
-# ----------------------------------
-# libogg
-# ----------------------------------
-- name: check if libogg installed
-  stat:
-    path: "{{ libogg_install_dir }}/libogg.a"
-  register: libogg_exists
-  ignore_errors: yes
-  changed_when: False
-  when: sox_exists.rc != 0
+  - include: install_lame.yml
+    when: sox_exists.rc != 0 and lame_exists.stat.exists == False
 
-- include: install_libogg.yml
-  when: sox_exists.rc != 0 and libogg_exists.stat.exists == False
 
-  
-# ----------------------------------
-# flac
-# ----------------------------------
-- name: check if libFLAC installed
-  stat:
-    path: "{{ flac_install_dir }}/libFLAC.so"
-  register: flac_exists
-  ignore_errors: yes
-  changed_when: False
-  failed_when: False
-  when: sox_exists.rc != 0
+  # ----------------------------------
+  # libmad
+  # ----------------------------------
+  - name: check if libmad installed
+    stat:
+      path: "{{ libmad_install_dir }}/libmad.a"
+    register: libmad_exists
+    ignore_errors: yes
+    changed_when: False
+    failed_when: False
+    when: sox_exists.rc != 0
 
-- include: install_flac.yml
-  when: sox_exists.rc != 0 and flac_exists.stat.exists == False
-  
-# ----------------------------------
-# Sox
-# ----------------------------------
-- include: install_sox.yml
-  when: sox_exists.rc != 0
+  - include: install_libmad.yml
+    when: sox_exists.rc != 0 and libmad_exists.stat.exists == False
+
+
+  # ----------------------------------
+  # libogg
+  # ----------------------------------
+  - name: check if libogg installed
+    stat:
+      path: "{{ libogg_install_dir }}/libogg.a"
+    register: libogg_exists
+    ignore_errors: yes
+    changed_when: False
+    when: sox_exists.rc != 0
+
+  - include: install_libogg.yml
+    when: sox_exists.rc != 0 and libogg_exists.stat.exists == False
+
+
+  # # ----------------------------------
+  # # flac
+  # # ----------------------------------
+  # - name: check if libFLAC installed
+  #   stat:
+  #     path: "{{ flac_install_dir }}/libFLAC.so"
+  #   register: flac_exists
+  #   ignore_errors: yes
+  #   changed_when: False
+  #   failed_when: False
+  #   when: sox_exists.rc != 0
+
+  # - include: install_flac.yml
+  #   when: sox_exists.rc != 0 and flac_exists.stat.exists == False
+
+  # ----------------------------------
+  # Sox
+  # ----------------------------------
+  - include: install_sox.yml
+    when: sox_exists.rc != 0
+
+  when: sox_install_from_source

@@ -1,0 +1,9 @@
+---
+sox_package_dependencies:
+  - epel-release
+
+sox_packages:
+    - libogg
+    - libmad
+    - lame
+    - sox

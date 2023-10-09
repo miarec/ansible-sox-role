@@ -1,0 +1,8 @@
+---
+sox_package_dependencies: []
+
+sox_packages:
+    - libogg-dev
+    - libmad0
+    - lame
+    - sox
