@@ -1,6 +1,6 @@
 ---
 name: Ansible role testing
-on:
+"on":
   pull_request:
   push:
     branches:
@@ -78,7 +78,7 @@ jobs:
         run: pip3 install -r molecule/install-from-package/test-requirements.txt
 
       - name: Run molecule tests., install from Package
-        run: molecule test -s install-from-repo
+        run: molecule test -s install-from-package
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
