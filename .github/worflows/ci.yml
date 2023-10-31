@@ -4,7 +4,7 @@ name: Ansible role testing
   pull_request:
   push:
     branches:
-      - master
+      - main
     paths-ignore:
       - '**.md'
 
