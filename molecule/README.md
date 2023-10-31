@@ -15,7 +15,7 @@ MOLECULE_DISTRO=centos7 MOLECULE_SOX_VERSION=14.4.2 molecule test
 
 ### Variables
  - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2204`
-    List of tested distros
+   - Tested distros;
     - `ubuntu2204`
     - `ubuntu2004`
     - `centos7`
@@ -35,12 +35,12 @@ molecule test
 
 Run test with variable example
 ```
-MOLECULE_DISTR0=centos7 molecule test
+MOLECULE_DISTR0=centos7 molecule test -s install-from-package
 ```
 
 ### Variables
  - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2204`
-    List of tested distros
+   - Tested distros
     - `ubuntu2204`
     - `ubuntu2004`
     - `centos7`
