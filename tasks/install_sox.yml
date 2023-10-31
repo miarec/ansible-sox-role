@@ -18,7 +18,7 @@
     src: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     dest: "{{ sox_download_dir }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/configure"
-    copy: no
+    copy: false
 
 # - name: Run configure | sox
 #   command: ./configure --bindir="{{ sox_install_dir }}" --with-flac --with-mp3
@@ -45,7 +45,7 @@
     creates: "{{ sox_install_dir }}/sox"
   notify:
     - reload ldconfig
-  become: yes
+  become: true
 
 - name: Clean up the source files | sox
   file:
@@ -55,4 +55,3 @@
     - "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     - "{{ sox_download_dir }}/sox-{{ sox_version }}"
   when: sox_cleanup_downloads|bool
-

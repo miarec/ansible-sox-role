@@ -2,7 +2,7 @@
 - name: install dependencies | Debian
   package:
     pkg: "{{ item }}"
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 86400
     state: present
   with_items:
@@ -25,7 +25,6 @@
     - gcc-c++
     - autoconf
     - automake
-    - libtool 
+    - libtool
     - patch
   when: ansible_os_family == "RedHat"
-

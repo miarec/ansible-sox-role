@@ -18,9 +18,9 @@
     src: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}.tar.gz"
     dest: "{{ libmad_download_dir }}"
     creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/configure"
-    copy: no
+    copy: false
 
-# create NEWS, AUTHORS and ChangeLog. These files are requires for "autoreconf -i" command    
+# create NEWS, AUTHORS and ChangeLog. These files are requires for "autoreconf -i" command
 - name: Create NEWS file | libmad
   command: "touch {{ libmad_download_dir }}/libmad-{{ libmad_version }}/NEWS"
   args:
@@ -41,13 +41,13 @@
   patch:
     src: files/libmad-0.15.1b-fixes-1.patch
     dest: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/configure.ac"
-    
+
 - name: Run autoreconf | libmad
   command: autoreconf -fi
   args:
     chdir: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
     creates: "{{ libmad_download_dir }}/libmad-{{ libmad_version }}/libtool"
-    
+
 - name: Run configure | libmad
   command: ./configure
   args:
@@ -67,15 +67,13 @@
     creates: "{{ libmad_install_dir }}/libmad.a"
   notify:
     - reload ldconfig
-  become: yes
- 
+  become: true
+
 - name: Clean up the source files | libmad
-  file: 
+  file:
     path: "{{ item }}"
     state: absent
   with_items:
     - "{{ libmad_download_dir }}/libmad-{{ libmad_version }}.tar.gz"
     - "{{ libmad_download_dir }}/libmad-{{ libmad_version }}"
-  when: libmad_cleanup_downloads|bool 
-  
- 
+  when: libmad_cleanup_downloads|bool
