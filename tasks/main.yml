@@ -8,7 +8,7 @@
 # Install Sox and libraries from package when enabled
 - include: install_package.yml
   become: true
-  when: not sox_install_from_source
+  when: not sox_install_from_source|bool
 
 # Install Sox and libraries from source when enabled
 - name: Install from Source
@@ -95,4 +95,4 @@
     - include: install_sox.yml
       when: sox_exists.rc != 0
 
-  when: sox_install_from_source
+  when: sox_install_from_source|bool
