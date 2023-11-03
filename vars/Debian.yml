@@ -6,3 +6,4 @@ sox_packages:
   - libmad0
   - lame
   - sox
+  - libsox-fmt-all
