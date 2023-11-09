@@ -13,7 +13,7 @@ Run test with variable example
 MOLECULE_DISTRO=centos7 MOLECULE_SOX_VERSION=14.4.2 molecule test
 ```
 
-### Variables
+### Molecule variables
  - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2204`
    - Tested distros;
     - `ubuntu2204`
@@ -30,7 +30,7 @@ This will test installing Sox from package
 
 Run Molecule test
 ```
-molecule test
+molecule test -s install-from-package
 ```
 
 Run test with variable example
@@ -38,7 +38,7 @@ Run test with variable example
 MOLECULE_DISTR0=centos7 molecule test -s install-from-package
 ```
 
-### Variables
+### Molecule variables
  - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2204`
    - Tested distros
     - `ubuntu2204`
