@@ -1,0 +1,14 @@
+---
+- name: Install dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ sox_package_dependencies }}"
+
+
+# Install Sox and Libraries from package
+- name: Install packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ sox_packages }}"

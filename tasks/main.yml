@@ -6,7 +6,7 @@
     - "../vars/{{ ansible_os_family }}.yml"
 
 # Install Sox and libraries from package when enabled
-- include: install_package.yml
+- include: install_from_package.yml
   become: true
   when: not sox_install_from_source|bool
 
@@ -39,7 +39,7 @@
       failed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_lame.yml
+    - include: install_lame_from_source.yml
       when: sox_exists.rc != 0 and lame_exists.stat.exists == false
 
 
@@ -55,7 +55,7 @@
       failed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_libmad.yml
+    - include: install_libmad_from_source.yml
       when: sox_exists.rc != 0 and libmad_exists.stat.exists == false
 
 
@@ -70,13 +70,13 @@
       changed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_libogg.yml
+    - include: install_libogg_from_source.yml
       when: sox_exists.rc != 0 and libogg_exists.stat.exists == false
 
     # ----------------------------------
     # Sox
     # ----------------------------------
-    - include: install_sox.yml
+    - include: install_from_source.yml
       when: sox_exists.rc != 0
 
   when: sox_install_from_source|bool
