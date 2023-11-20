@@ -63,7 +63,7 @@ jobs:
         distro:
           - ubuntu2004
           - ubuntu2204
-          - centos7
+          # - centos7
 
     steps:
       - name: Check out the Repository.

@@ -13,6 +13,9 @@ Ansible role for installation of the following
 Installation varaiables
   - `sox_install_from_source` when true, libraries and Sox will be installed from source, default = `true`
 
+
+> **_NOTE:_**  MP3 support for Sox is not available for Centos7 when installed from package.
+
 Version varaiables (when `sox_install_from_source` = true )
   - `sox_version` default `14.4.2`
   - `libmad_version`default `0.15.1b`
