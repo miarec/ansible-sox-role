@@ -12,18 +12,12 @@
 # Check for proper configuration
 - include: preflight.yml
 
-# Moved to preflight
-# - include_vars: "{{ item }}"
-#   with_first_found:
-#     - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-#     - "../vars/{{ ansible_distribution }}.yml"
-#     - "../vars/{{ ansible_os_family }}.yml"
-
-# Install Sox and libraries from package when enabled
+# # Install Sox and libraries from package when enabled
 - include: install_from_package.yml
   become: true
   when: not sox_install_from_source|bool
 
+# TODO Need to make this conditional based on the formats supplied
 # Install Sox and libraries from source when enabled
 - name: Install from Source
   block:

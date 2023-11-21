@@ -5,12 +5,17 @@
     state: present
   with_items: "{{ sox_package_dependencies }}"
 
-
-# Install Sox and Libraries from package
-- name: Install packages
+# Install Sox from package
+- name: Install sox package.
   package:
     name: "{{ item }}"
     state: present
-  with_items:
-    - "{{ sox_base_packages }}"
-    - "{{ sox_format_packages }}"
+  with_items: "{{ sox_package_base }}"
+
+# Install additional pacakges for optional audio formats.
+- name: Install packages for additional audio formats.
+  package:
+    name: "{{ sox_package_formats_options[ item ] }}"
+    state: present
+  with_items: "{{ sox_package_formats_options.keys() }}"
+  when: item in sox_install_formats

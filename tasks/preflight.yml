@@ -1,7 +1,7 @@
 ---
-- name: Check for mp3 support via package install - RedHat.
+- name: Check for mp3 support during package install - RedHat.
   fail:
-    msg: Sox must be compiled to support mp3 format on RedHat systems.
+    msg: Sox must be compiled to support mp3 on RedHat systems. 'sox_install_from_source' must be true, when 'mp3' in 'sox_install_formats'.
   when: (ansible_os_family == "RedHat" and not sox_install_from_source) and 'mp3' in sox_install_formats
 
 # Include OS specific vars
@@ -10,3 +10,4 @@
     - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
     - "../vars/{{ ansible_distribution }}.yml"
     - "../vars/{{ ansible_os_family }}.yml"
+
