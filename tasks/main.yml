@@ -1,4 +1,15 @@
 ---
+# New plan,
+# idea is to be able to build sox with new formats by supplying vairiables instead of updating role
+#  - install from package y or n
+#  - supply list of formats
+#     - wav
+#     - ogg
+#     - mp3
+#     - flac
+#   - install based on method and list of formats
+
+
 - include_vars: "{{ item }}"
   with_first_found:
     - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
