@@ -2,6 +2,28 @@
 ## Installation options
 sox_install_from_source: true  # If true, the source for the version will be downloaded and compiled
 
+sox_install_formats:
+  - wav
+  - ogg
+  # - mp3
+
+# Pacakage Options
+sox_base_packages:
+  - sox
+
+sox_format_packages:
+  - mp3: libsox-fmt-mp3
+
+# sox_base_packages:
+#   - sox
+
+# sox_format_packages:
+#   - libsox-fmt-base
+#   - libsox-fmt-mp3
+
+
+
+# Compile Options
 sox_version: 14.4.2
 libmad_version: 0.15.1b
 lame_version: 3.99.5

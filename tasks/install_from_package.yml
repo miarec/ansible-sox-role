@@ -11,4 +11,6 @@
   package:
     name: "{{ item }}"
     state: present
-  with_items: "{{ sox_packages }}"
+  with_items:
+    - "{{ sox_base_packages }}"
+    - "{{ sox_format_packages }}"

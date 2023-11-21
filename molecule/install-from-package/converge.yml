@@ -16,7 +16,12 @@
           changed_when: false
           when: ansible_os_family == "Debian"
 
+  # roles:
+  #   - role: ansible-sox-role
+  #     tags:
+  #       - sox
+
   roles:
-    - role: ansible-sox-role
+    - role: sox
       tags:
         - sox
