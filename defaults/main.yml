@@ -23,11 +23,7 @@ sox_package_formats_options:
   pulse: libsox-fmt-pulse
 
 
-
-
-
 ### Compile Options
-
 sox_version: 14.4.2
 libmad_version: 0.15.1b
 lame_version: 3.99.5
