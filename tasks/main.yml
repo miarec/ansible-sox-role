@@ -10,10 +10,10 @@
 #   - install based on method and list of formats
 
 # Check for proper configuration
-- include: preflight.yml
+- import_tasks: preflight.yml
 
 # # Install Sox and libraries from package when enabled
-- include: install_from_package.yml
+- import_tasks: install_from_package.yml
   become: true
   when: not sox_install_from_source|bool
 
@@ -22,7 +22,7 @@
 - name: Install from Source
   block:
 
-    - include: check_vars.yml
+    - import_tasks: check_vars.yml
 
     - name: check if sox installed
       command: "which {{ sox_install_dir }}/sox"
@@ -31,7 +31,7 @@
       changed_when: false
       failed_when: false
 
-    - include: dependencies.yml
+    - import_tasks: dependencies.yml
       become: true
       when: sox_exists.rc != 0
 
@@ -47,7 +47,7 @@
       failed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_lame_from_source.yml
+    - import_tasks: install_lame_from_source.yml
       when: sox_exists.rc != 0 and lame_exists.stat.exists == false
 
 
@@ -63,7 +63,7 @@
       failed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_libmad_from_source.yml
+    - import_tasks: install_libmad_from_source.yml
       when: sox_exists.rc != 0 and libmad_exists.stat.exists == false
 
 
@@ -78,13 +78,13 @@
       changed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_libogg_from_source.yml
+    - import_tasks: install_libogg_from_source.yml
       when: sox_exists.rc != 0 and libogg_exists.stat.exists == false
 
     # ----------------------------------
     # Sox
     # ----------------------------------
-    - include: install_from_source.yml
+    - import_tasks: install_from_source.yml
       when: sox_exists.rc != 0
 
   when: sox_install_from_source|bool
