@@ -34,7 +34,7 @@
 
 
 - name: Run configure | sox
-  command: ./configure --bindir="{{ sox_install_dir }}" --with-mp3 --with-flac --with-oggvorbis=dyn
+  command: ./configure --bindir="{{ sox_install_dir }}" --with-mp3 --with-flac --with-oggvorbis
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"

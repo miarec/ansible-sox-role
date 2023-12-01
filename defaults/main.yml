@@ -28,13 +28,15 @@ sox_version: 14.4.2
 libmad_version: 0.15.1b
 lame_version: 3.99.5
 libogg_version: 1.3.3
-libvorbis_version: 1.3.7
+libvorbis_version: 1.3.6
 flac_version: 1.3.2
 
 sox_download_url: "https://downloads.sourceforge.net/project/sox/sox/{{ sox_version }}/sox-{{ sox_version }}.tar.gz"
 libmad_download_url: "https://downloads.sourceforge.net/project/mad/libmad/{{ libmad_version }}/libmad-{{ libmad_version }}.tar.gz"
 libogg_download_url: "http://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-{{ libogg_version }}.tar.gz"
-libvorbis_download_url: "https://downloads.xiph.org/releases/vorbis/libvorbis-{{ libvorbis_version }}.tar.xz"
+libvorbis_download_url: "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-{{ libvorbis_version }}.tar.xz"
+
+
 flac_download_url: "https://ftp.osuosl.org/pub/xiph/releases/flac/flac-{{ flac_version }}.tar.xz"
 
 

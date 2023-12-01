@@ -25,6 +25,8 @@
   args:
     chdir: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}"
     creates: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}/Makefile"
+  environment:
+    LD_LIBRARY_PATH: "{{ libogg_install_dir }}"
 
 - name: Run make | libvorbis
   command: make -j{{ ansible_processor_cores + 1 }}
