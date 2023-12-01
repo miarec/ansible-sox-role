@@ -107,7 +107,7 @@
       changed_when: false
       when: sox_exists.rc != 0
 
-    - include: install_flac_from_source.yml
+    - import_tasks: install_flac_from_source.yml
       when: sox_exists.rc != 0 and flac_exists.stat.exists == False
 
     # ----------------------------------
