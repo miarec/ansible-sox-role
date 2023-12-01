@@ -34,7 +34,7 @@ def test_bins(host):
         assert b.exists
         assert b.is_file
 
-# Move this to testing files by generating and then converting files
+# This is probably fin if the
 # def test_supported_formats(host):
 
 #     help_output = host.run('/usr/bin/sox --help | grep "AUDIO FILE FORMATS:"')
@@ -50,6 +50,7 @@ def test_bins(host):
 
 def test_supported_formats(host):
     # Define list of formats
+    # make this conditional based on OS?
     formats = [
         "mp3",
         "wav",

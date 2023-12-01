@@ -1,0 +1,51 @@
+---
+- name: set libogg checksum
+  set_fact:
+    libogg_checksum: "sha1:{{ libogg_checksums[libogg_version] }}"
+  when:
+    - libvorbis_verify_checksum|bool
+    - libvorbis_checksum is not defined
+    - libvorbis_version in libvorbis_checksums
+
+- name: download libvorbis
+  get_url:
+    url: "{{ libvorbis_download_url }}"
+    dest: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}.tar.gz"
+    checksum: "{{ libvorbis_checksum|default(omit) }}"
+
+- name: extract libvorbis tarball
+  unarchive:
+    src: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}.tar.gz"
+    dest: "{{ libvorbis_download_dir }}"
+    creates: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}/configure"
+    copy: false
+
+- name: Run configure | libvorbis
+  command: ./configure
+  args:
+    chdir: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}"
+    creates: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}/Makefile"
+
+- name: Run make | libvorbis
+  command: make -j{{ ansible_processor_cores + 1 }}
+  args:
+    chdir: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}"
+    creates: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}/.libs/libvorbis.a"
+
+- name: Run make install | libvorbis
+  command: make install
+  args:
+    chdir: "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}"
+    creates: "{{ libvorbis_install_dir }}/libvorbis.a"
+  notify:
+    - reload ldconfig
+  become: true
+
+- name: Clean up the source files | libvorbis
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}.tar.gz"
+    - "{{ libvorbis_download_dir }}/libvorbis-{{ libvorbis_version }}"
+  when: libvorbis_cleanup_downloads|bool
