@@ -1,7 +1,7 @@
 ---
-- name: set libogg checksum
+- name: set libvorbis checksum
   set_fact:
-    libogg_checksum: "sha1:{{ libogg_checksums[libogg_version] }}"
+    libvorbis_checksum: "sha1:{{ libvorbis_checksums[libvorbis_version] }}"
   when:
     - libvorbis_verify_checksum|bool
     - libvorbis_checksum is not defined
