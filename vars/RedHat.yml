@@ -1,3 +1,3 @@
 ---
-sox_package_dependencies:
-  - epel-release
+# sox_package_dependencies:
+#   - epel-release

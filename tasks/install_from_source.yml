@@ -34,7 +34,7 @@
 
 
 - name: Run configure | sox
-  command: ./configure --bindir="{{ sox_install_dir }}" --with-mp3 --with-flac --with-oggvorbis
+  command: ./configure --bindir={{ sox_install_dir }} --with-mp3 {{ _configure_args }}
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
@@ -54,11 +54,11 @@
     - reload ldconfig
   become: true
 
-- name: Clean up the source files | sox
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
-    - "{{ sox_download_dir }}/sox-{{ sox_version }}"
-  when: sox_cleanup_downloads|bool
+# - name: Clean up the source files | sox
+#   file:
+#     path: "{{ item }}"
+#     state: absent
+#   with_items:
+#     - "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
+#     - "{{ sox_download_dir }}/sox-{{ sox_version }}"
+#   when: sox_cleanup_downloads|bool

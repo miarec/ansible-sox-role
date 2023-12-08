@@ -6,7 +6,7 @@
   with_items: "{{ sox_package_dependencies }}"
 
 # Install Sox from package
-- name: Install sox package.
+- name: Install base sox package.
   package:
     name: "{{ item }}"
     state: present
@@ -15,7 +15,9 @@
 # Install additional pacakges for optional audio formats.
 - name: Install packages for additional audio formats.
   package:
-    name: "{{ sox_package_formats_options[ item ] }}"
+    name: "{{ item.value.packages }}"
     state: present
-  with_items: "{{ sox_package_formats_options.keys() }}"
-  when: item in sox_install_formats
+  with_dict: "{{ sox_package_optional_formats_config }}"
+  loop_control:
+    label: "{{ item.key }} - {{ item.value.packages }}"
+  # when: item in sox_install_formats
