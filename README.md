@@ -17,26 +17,56 @@ Sox variables
 
 Optional Format variables:
 
- - `sox_compile_optional_library_config` defines information about
+ - `sox_compile_optional_formats_config` dictionary that defines optional formats that sox should be compiled to support
+    - `key` unique name,
+      - `configure_args` String of any specific arguements that need to be passed at the configure step of Sox
+      - `libraries` list of libraies that need to be installed, this must match a key in `sox_compile_optional_library_config`
 
-```yaml
-sox_compile_optional_library_config:
-  flac:
-    version: 1.3.2
-    download_url: "https://ftp.osuosl.org/pub/xiph/releases/flac/flac-1.3.2.tar.xz"
-    download_dir: "{{ compile_default_download_dir }}"
-    download_checksum: "sha1:2bdbb56b128a780a5d998e230f2f4f6eb98f33ee"
-    download_cleanup: true
-    configure_args:
-    install_dir: "{{ compile_default_install_dir }}"
-    library_file: "libFLAC.so"
-```
+    Example `sox_compile_optional_formats_config`
+    ```yaml
+    sox_compile_optional_formats_config:
+      ogg:
+        configure_args: "--with-oggvorbis"
+        libraries: [libogg, libvorbis]
+    ```
 
-Version varaiables (when `sox_install_from_source` = true )
-  - `sox_version` default `14.4.2`
-  - `libmad_version`default `0.15.1b`
-  - `lame_version` default `3.99.5`
-  - `libogg_version` default `1.3.3`
+ - `sox_compile_optional_library_config` dictionary that defines information about needed to install libraies to support additonal formats
+    - `key` unique name, this must match value libraries defined in `sox_compile_optional_formats_config`
+        - `version` version of library that will be donwloaded
+        - `donload_url` url where library will be downloaded from
+        - `download_dir` path where binary will be donloaded to, preference would to be use the same dir for all directories
+        - `download_checksum` Optional `[method]:[checksum]`, if no checksum is supplied, it will not be verified
+        - `download_cleanup` Optional, if true downloaded and extracted files will be removed after installation
+        - `configure_args` String of any specific arguements that need to be passed at the configure step
+        - `install_dir` path where binary will be installed to, preference would to be use the same dir for all directories
+        - `library_file` library file name, this is used to verify installation
+
+      Example `sox_compile_optional_library_config`
+      ```yaml
+      sox_compile_optional_library_config:
+        flac:
+          version: 1.3.2
+          download_url: "https://ftp.osuosl.org/pub/xiph/releases/flac/flac-1.3.2.tar.xz"
+          download_dir: "{{ compile_default_download_dir }}"
+          download_checksum: "sha1:2bdbb56b128a780a5d998e230f2f4f6eb98f33ee"
+          download_cleanup: true
+          configure_args:
+          install_dir: "{{ compile_default_install_dir }}"
+          library_file: "libFLAC.so"
+      ```
+
+### Install from pacakge variables
+ - `sox_package_optional_formats_config` Dictionary of optional formats, and associated configuration
+    - `key` unique name,
+      - `packages` list of any addtional packages that need to be installed
+
+    Example `sox_package_optional_formats_config`
+    ```yaml
+    sox_package_optional_formats_config: {}
+      oss:
+        packages: [libsox-fmt-oss]
+    ```
+
 
 ## Example Playbook
 
