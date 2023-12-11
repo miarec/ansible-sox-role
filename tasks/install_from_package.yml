@@ -20,4 +20,3 @@
   with_dict: "{{ sox_package_optional_formats_config }}"
   loop_control:
     label: "{{ item.key }} - {{ item.value.packages }}"
-  # when: item in sox_install_formats

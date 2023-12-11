@@ -1,5 +1,5 @@
 ---
-- name: set sox checksum
+- name: set checksum | sox
   set_fact:
     sox_checksum: "sha1:{{ sox_checksums[sox_version] }}"
   when:
@@ -7,31 +7,18 @@
     - sox_checksum is not defined
     - sox_version in sox_checksums
 
-- name: download sox
+- name: download tarball | sox
   get_url:
     url: "{{ sox_download_url }}"
     dest: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     checksum: "{{ sox_checksum|default(omit) }}"
 
-- name: extract sox tarball
+- name: extract tarball | sox
   unarchive:
     src: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     dest: "{{ sox_download_dir }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/configure"
     copy: false
-
-# - name: Run configure | sox
-#   command: ./configure --bindir="{{ sox_install_dir }}" --with-flac --with-mp3
-#   args:
-#     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
-#     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
-
-# - name: Run configure | sox
-#   command: ./configure --bindir="{{ sox_install_dir }}" --with-mp3
-#   args:
-#     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
-#     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
-
 
 - name: Run configure | sox
   command: ./configure --bindir={{ sox_install_dir }} --with-mp3 {{ _configure_args }}
@@ -54,11 +41,11 @@
     - reload ldconfig
   become: true
 
-# - name: Clean up the source files | sox
-#   file:
-#     path: "{{ item }}"
-#     state: absent
-#   with_items:
-#     - "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
-#     - "{{ sox_download_dir }}/sox-{{ sox_version }}"
-#   when: sox_cleanup_downloads|bool
+- name: Clean up the source files | sox
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
+    - "{{ sox_download_dir }}/sox-{{ sox_version }}"
+  when: sox_cleanup_downloads|bool

@@ -1,7 +1,7 @@
 ---
 name: Ansible role testing
 "on":
-  # pull_request:
+  pull_request:
   push:
     branches:
       - master
@@ -63,7 +63,6 @@ jobs:
         distro:
           - ubuntu2004
           - ubuntu2204
-          # - centos7
 
     steps:
       - name: Check out the Repository.

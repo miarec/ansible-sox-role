@@ -1,46 +1,35 @@
 ---
-# New plan,
-# idea is to be able to build sox with new formats by supplying vairiables instead of updating role
-#  - install from package y or n
-#  - supply list of formats
-#     - wav
-#     - ogg
-#     - mp3
-#     - flac
-#   - install based on method and list of formats
-
-
-# TODO
-  # - make additional formats available with just variables
-
-
-# Check for proper configuration
+# Prepare for ansible run
 - import_tasks: preflight.yml
 
-# # Install Sox and libraries from package when enabled
-- import_tasks: install_from_package.yml
-  become: true
-  when: not sox_install_from_source|bool
-
-# TODO Need to make this conditional based on the formats supplied
-# Install Sox and libraries from source when enabled
-- name: Install from Source
+# Install Sox and libraries from package when enabled
+- name: Install from pacakage.
   block:
 
-# Add step to render optional items #
-# Add step to check for previously installed
+  - name: Check for package install on RedHat.
+    fail:
+      msg: Sox must be compiled to support mp3 on RedHat systems. 'sox_install_from_source' must be 'true' when RedHat based system.
+    when: ansible_os_family == "RedHat" and not sox_install_from_source
 
+  - import_tasks: install_from_package.yml
+    become: true
+
+  when: not sox_install_from_source|bool
+
+# Install Sox and libraries from source when enabled
+- name: Install from source.
+  block:
+    # Verify variables are present
     - import_tasks: check_vars.yml
 
+    # Instal Dependencies for downloading and compiling from source
     - import_tasks: dependencies.yml
       become: true
-    #   when: sox_exists.rc != 0
 
     # ----------------------------------
     # Libraries
     # ----------------------------------
-
-    - name: Install Base Libraries
+    - name: Install base libraries.
       include_tasks: install_libraries_from_source.yml
       vars:
         library_config: "{{ outer_item }}"
@@ -49,201 +38,58 @@
         label: "{{ outer_item.key }}-{{ outer_item.value.version }}"
         loop_var: outer_item
 
-    # Install Optional Libraries
-    - name: Install Optional Libraries
+    - name: Install optional libraries.
       block:
+        - set_fact:
+            _optional_libraries: []
 
-      - set_fact:
-          _optional_libraries: []
+        - name: Extract list of optional libraries from `sox_compile_optional_formats_config`.
+          set_fact:
+            _optional_libraries: "{{ _optional_libraries + item.value.libraries  }}"
+          with_dict: "{{ sox_compile_optional_formats_config }}"
+          loop_control:
+            label: "{{ item.key }}"
 
-      - name: Extract List of Optional Libraries from "sox_compile_optional_formats_config"
-        set_fact:
-          _optional_libraries: "{{ _optional_libraries + item.value.libraries  }}"
-        with_dict: "{{ sox_compile_optional_formats_config }}"
-        loop_control:
-          label: "{{ item.key }}"
-
-      - debug: var=_optional_libraries
-
-      - name: Install Optional Libraries
-        include_tasks: install_libraries_from_source.yml
-        vars:
-          library_config: "{{ outer_item }}"
-        with_dict: "{{ sox_compile_optional_library_config }}"
-        loop_control:
-          label: "{{ outer_item.key }}-{{ outer_item.value.version }}"
-          loop_var: outer_item
-        when: outer_item.key in _optional_libraries
+        - name: Install optional libraries.
+          include_tasks: install_libraries_from_source.yml
+          vars:
+            library_config: "{{ outer_item }}"
+          with_dict: "{{ sox_compile_optional_library_config }}"
+          loop_control:
+            label: "{{ outer_item.key }}-{{ outer_item.value.version }}"
+            loop_var: outer_item
+          when: outer_item.key in _optional_libraries
 
       when: sox_compile_optional_formats_config|length > 0
-
-    # - set_fact:
-    #     sox_compile_optional_formats: []
-
-    # - name: Render list optional libraries
-    #   set_fact:
-    #     sox_compile_optional_formats: "{{ sox_compile_optional_formats + item.value.libraries }} "
-    #   with_dict: "{{ sox_compile_optional_formats_config }}"
-    #   loop_control:
-    #     label: "{{ item.key }}"
-    #   when: item.key in sox_optional_formats
-
-    # - debug: var=sox_compile_optional_formats
-
-    # - name: Install Optional Libraries
-    #   include_tasks: install_libraries_from_source.yml
-    #   vars:
-    #     library_config: "{{ outer_item }}"
-    #   with_dict: "{{ sox_compile_optional_library_config }}"
-    #   loop_control:
-    #     label: "{{ outer_item.key }}-{{ outer_item.value.version }}"
-    #     loop_var: outer_item
-    #   when: outer_item.key in sox_compile_optional_formats
-
-    # # Install Additional Libraries
-    # - name: Install Additional Libraries
-    #   include_tasks: install_libraries_from_source.yml
-    #   vars:
-    #     library_config: "{{ outer_item }}"
-    #   with_dict: "{{ sox_compile_additional_library_config }}"
-    #   loop_control:
-    #     label: "{{ outer_item.key }}-{{ outer_item.value.version }}"
-    #     loop_var: outer_item
-    #   when: outer_item.key in sox_compile_optional_formats
-
-    # - name: check if sox installed
-    #   command: "which {{ sox_install_dir }}/sox"
-    #   register: sox_exists
-    #   ignore_errors: true
-    #   changed_when: false
-    #   failed_when: false
 
     # ----------------------------------
     # Sox
     # ----------------------------------
-
-    # - debug:
-    #     msg: "{{ item.value.configure_args }}"
-    #   with_dict: "{{ sox_compile_optional_formats_config }}"
-
-    - name: check if sox installed
+    - name: Check if sox is installed.
       command: "which {{ sox_install_dir }}/sox"
       register: _sox_exists
       ignore_errors: true
       changed_when: false
       failed_when: false
 
-    - name: Install sox from Source
+    - name: Install sox from source.
       block:
+        - set_fact:
+            _configure_args: []
 
-      - set_fact:
-          _configure_args: []
+        - name: Extract configure arguments from "sox_compile_optional_formats_config" | sox
+          set_fact:
+            _configure_args: "{{ _configure_args + [ item.value.configure_args ] }}"
+          with_dict: "{{ sox_compile_optional_formats_config }}"
+          loop_control:
+            label: "{{ item.key }}"
 
-      - name: Extract configure arguments from "sox_compile_optional_formats_config" | sox
-        set_fact:
-          _configure_args: "{{ _configure_args + [ item.value.configure_args ] }}"
-        with_dict: "{{ sox_compile_optional_formats_config }}"
-        loop_control:
-          label: "{{ item.key }}"
+        - name: Render configure arguments | sox
+          set_fact:
+            _configure_args: "{{ _configure_args | join(' ') }} {{ sox_compile_optional_configure_args | join (' ') }}"
 
-      - name: Render configure arguments | sox
-        set_fact:
-          _configure_args: "{{ _configure_args | join(' ') }} {{ sox_compile_optional_configure_args | join (' ') }}"
-        # with_dict: "{{ sox_compile_optional_formats_config }}"
-        # loop_control:
-        #   label: "{{ item.key }}"
-
-      - debug: var=_configure_args
-
-      # - set_fact:
-      #     _configure_args: "{{ _configure_args | string }}"
-
-      # - debug: var=_configure_args|type_debug
-
-      # conditional configure flags
-      # Look at check if installed action
-
-      - include_tasks: install_from_source.yml
-      #   # when: sox_exists.rc != 0
+        - include_tasks: install_from_source.yml
 
       when: _sox_exists.rc != 0
-
-
-    # # ----------------------------------
-    # # lame
-    # # ----------------------------------
-    # - name: check if lame installed
-    #   stat:
-    #     path: "{{ lame_install_dir }}/libmp3lame.a"
-    #   register: lame_exists
-    #   ignore_errors: true
-    #   changed_when: false
-    #   failed_when: false
-    #   when: sox_exists.rc != 0
-
-    # - import_tasks: install_lame_from_source.yml
-    #   when: sox_exists.rc != 0 and lame_exists.stat.exists == false
-
-
-    # # ----------------------------------
-    # # libmad
-    # # ----------------------------------
-    # - name: check if libmad installed
-    #   stat:
-    #     path: "{{ libmad_install_dir }}/libmad.a"
-    #   register: libmad_exists
-    #   ignore_errors: true
-    #   changed_when: false
-    #   failed_when: false
-    #   when: sox_exists.rc != 0
-
-    # - import_tasks: install_libmad_from_source.yml
-    #   when: sox_exists.rc != 0 and libmad_exists.stat.exists == false
-
-
-    # # ----------------------------------
-    # # libogg
-    # # ----------------------------------
-    # - name: check if libogg installed
-    #   stat:
-    #     path: "{{ libogg_install_dir }}/libogg.a"
-    #   register: libogg_exists
-    #   ignore_errors: true
-    #   changed_when: false
-    #   when: sox_exists.rc != 0
-
-    # - import_tasks: install_libogg_from_source.yml
-    #   when: sox_exists.rc != 0 and libogg_exists.stat.exists == false
-
-    # # ----------------------------------
-    # # libvorbis
-    # # ----------------------------------
-    # - name: check if libvorbis installed
-    #   stat:
-    #     path: "{{ libvorbis_install_dir }}/libvorbis.a"
-    #   register: libvorbis_exists
-    #   ignore_errors: true
-    #   changed_when: false
-    #   when: sox_exists.rc != 0
-
-    # - import_tasks: install_libvorbis_from_source.yml
-    #   when: sox_exists.rc != 0 and libvorbis_exists.stat.exists == false
-
-
-    # # ----------------------------------
-    # # flac
-    # # ----------------------------------
-    # - name: check if libFLAC installed
-    #   stat:
-    #     path: "{{ flac_install_dir }}/libFLAC.so"
-    #   register: flac_exists
-    #   ignore_errors: true
-    #   changed_when: false
-    #   when: sox_exists.rc != 0
-
-    # - import_tasks: install_flac_from_source.yml
-    #   when: sox_exists.rc != 0 and flac_exists.stat.exists == False
-
-
 
   when: sox_install_from_source|bool
