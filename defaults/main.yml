@@ -25,14 +25,12 @@ sox_package_optional_formats_config: {}
 
 
 ## Source Installation options
-sox_compile_default_download_dir: /tmp
-sox_compile_default_install_dir: /usr/local/lib
-sox_compile_default_download_cleanup: true
 
+### Sox variables
 sox_version: 14.4.2
 sox_download_url: "https://downloads.sourceforge.net/project/sox/sox/{{ sox_version }}/sox-{{ sox_version }}.tar.gz"
 sox_verify_checksum: true
-sox_download_dir: "{{ sox_compile_default_download_dir }}"
+sox_download_dir: /tmp
 sox_install_dir: /usr/local/bin
 
 # whether or not to delete the downloaded source code. By setting it
@@ -40,6 +38,10 @@ sox_install_dir: /usr/local/bin
 # local caching can be achieved.
 sox_cleanup_downloads: true
 
+### Library variables
+sox_compile_default_library_download_dir: /tmp
+sox_compile_default_library_install_dir: /usr/local/lib
+sox_compile_default_library_download_cleanup: true
 
 sox_compile_optional_configure_args: []
 # Supply a list of additional arguments to  be supplied when ./configure is ran
@@ -55,19 +57,19 @@ sox_compile_base_library_config:
     version: 3.99.5
     download_url: "https://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz"
     download_checksum: "sha1:03a0bfa85713adcc6b3383c12e2cc68a9cfbf4c4"
-    download_dir: "{{ sox_compile_default_download_dir }}"
-    download_cleanup: "{{ sox_compile_default_download_cleanup }}"
-    configure_args: "--bindir={{ sox_compile_default_install_dir }} --enable-nasm"
-    install_dir: "{{ sox_compile_default_install_dir }}"
+    download_dir: "{{ sox_compile_default_library_download_dir }}"
+    download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
+    configure_args: "--bindir={{ sox_compile_default_library_install_dir }} --enable-nasm"
+    install_dir: "{{ sox_compile_default_library_install_dir }}"
     library_file: "libmp3lame.a"
   libmad:
     version: 0.15.1b
     download_url: "https://downloads.sourceforge.net/project/mad/libmad/0.15.1b/libmad-0.15.1b.tar.gz"
-    download_dir: "{{ sox_compile_default_download_dir }}"
+    download_dir: "{{ sox_compile_default_library_download_dir }}"
     download_checksum: "sha1:cac19cd00e1a907f3150cc040ccc077783496d76"
-    download_cleanup: "{{ sox_compile_default_download_cleanup }}"
+    download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
     configure_args:
-    install_dir: "{{ sox_compile_default_install_dir }}"
+    install_dir: "{{ sox_compile_default_library_install_dir }}"
     library_file: "libmad.a"
 
 
@@ -91,27 +93,27 @@ sox_compile_optional_library_config: {}
 #   flac:
 #     version: 1.3.2
 #     download_url: "https://ftp.osuosl.org/pub/xiph/releases/flac/flac-1.3.2.tar.xz"
-#     download_dir: "{{ sox_compile_default_download_dir }}"
+#     download_dir: "{{ sox_compile_default_library_download_dir }}"
 #     download_checksum: "sha1:2bdbb56b128a780a5d998e230f2f4f6eb98f33ee"
 #     download_cleanup: true
 #     configure_args:
-#     install_dir: "{{ sox_compile_default_install_dir }}"
+#     install_dir: "{{ sox_compile_default_library_install_dir }}"
 #     library_file: "libFLAC.so"
 #   libogg:
 #     version: 1.3.3
 #     download_url: "http://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.3.tar.gz"
-#     download_dir: "{{ sox_compile_default_download_dir }}"
+#     download_dir: "{{ sox_compile_default_library_download_dir }}"
 #     download_checksum: "sha1:28ba40fd2e2d41988f658a0016fa7b534e509bc0"
-#     download_cleanup: "{{ sox_compile_default_download_cleanup }}"
+#     download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
 #     configure_args:
-#     install_dir: "{{ sox_compile_default_install_dir }}"
+#     install_dir: "{{ sox_compile_default_library_install_dir }}"
 #     library_file: "libogg.a"
 #   libvorbis:
 #     version: 1.3.6
 #     download_url: "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-1.3.6.tar.xz"
-#     download_dir: "{{ sox_compile_default_download_dir }}"
+#     download_dir: "{{ sox_compile_default_library_download_dir }}"
 #     download_checksum: "sha1:237e3d1c66452734fd9b32f494f44238b4f0185e"
-#     download_cleanup: "{{ sox_compile_default_download_cleanup }}"
-#     configure_args: "--bindir={{ sox_compile_default_install_dir }} --libdir={{ sox_compile_default_install_dir }}"
-#     install_dir: "{{ sox_compile_default_install_dir }}"
+#     download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
+#     configure_args: "--bindir={{ sox_compile_default_library_install_dir }} --libdir={{ sox_compile_default_library_install_dir }}"
+#     install_dir: "{{ sox_compile_default_library_install_dir }}"
 #     library_file: "libvorbis.a"
