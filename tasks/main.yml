@@ -5,14 +5,13 @@
 # Install Sox and libraries from package when enabled
 - name: Install from pacakage.
   block:
+    - name: Check for package install on RedHat.
+      fail:
+        msg: Sox must be compiled to support mp3 on RedHat systems. 'sox_install_from_source' must be 'true' when RedHat based system.
+      when: ansible_os_family == "RedHat" and not sox_install_from_source
 
-  - name: Check for package install on RedHat.
-    fail:
-      msg: Sox must be compiled to support mp3 on RedHat systems. 'sox_install_from_source' must be 'true' when RedHat based system.
-    when: ansible_os_family == "RedHat" and not sox_install_from_source
-
-  - import_tasks: install_from_package.yml
-    become: true
+    - import_tasks: install_from_package.yml
+      become: true
 
   when: not sox_install_from_source|bool
 
