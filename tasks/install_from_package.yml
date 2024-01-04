@@ -1,0 +1,22 @@
+---
+- name: Install dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ sox_package_dependencies }}"
+
+# Install Sox from package
+- name: Install base sox package.
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ sox_package_base }}"
+
+# Install additional pacakges for optional audio formats.
+- name: Install packages for additional audio formats.
+  package:
+    name: "{{ item.value.packages }}"
+    state: present
+  with_dict: "{{ sox_package_optional_formats_config }}"
+  loop_control:
+    label: "{{ item.key }} - {{ item.value.packages }}"

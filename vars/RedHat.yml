@@ -1,0 +1,9 @@
+---
+sox_compile_dependencies:
+  - gcc
+  - make
+  - gcc-c++
+  - autoconf
+  - automake
+  - libtool
+  - patch

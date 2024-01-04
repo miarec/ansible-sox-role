@@ -1,0 +1,28 @@
+---
+# create NEWS, AUTHORS and ChangeLog. These files are requires for "autoreconf -i" command
+- name: Create NEWS file | libmad
+  command: "touch {{ libmad_tmp_dir }}/NEWS"
+  args:
+    creates: "{{ libmad_tmp_dir }}/NEWS"
+
+- name: Create AUTHORS file | libmad
+  command: "touch {{ libmad_tmp_dir }}/AUTHORS"
+  args:
+    creates: "{{ libmad_tmp_dir }}/AUTHORS"
+
+- name: Create ChangeLog file | libmad
+  command: "touch {{ libmad_tmp_dir }}/ChangeLog"
+  args:
+    creates: "{{ libmad_tmp_dir }}/ChangeLog"
+
+# Patch configure.ac because libmad is using -fforce-mem option that has been removed in GCC 4.3
+- name: Patch configure.ac | libmad
+  patch:
+    src: files/libmad-0.15.1b-fixes-1.patch
+    dest: "{{ libmad_tmp_dir }}/configure.ac"
+
+- name: Run autoreconf | libmad
+  command: autoreconf -fi
+  args:
+    chdir: "{{ libmad_tmp_dir }}"
+    creates: "{{ libmad_tmp_dir }}/libtool"

@@ -1,31 +1,8 @@
 ---
-- name: install dependencies | Debian
+- name: Install compile dependencies.
   package:
     pkg: "{{ item }}"
-    update_cache: yes
-    cache_valid_time: 86400
+    # update_cache: true
+    # cache_valid_time: 86400
     state: present
-  with_items:
-    - gcc
-    - make
-    - g++
-    - autoconf
-    - automake
-    - libtool
-    - patch
-  when: ansible_os_family == "Debian"
-
-- name: install dependencies | RedHat
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - gcc
-    - make
-    - gcc-c++
-    - autoconf
-    - automake
-    - libtool 
-    - patch
-  when: ansible_os_family == "RedHat"
-
+  with_items: "{{ sox_compile_dependencies }}"
