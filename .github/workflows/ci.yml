@@ -26,9 +26,9 @@ jobs:
 
   test1:
     name: molecule(source)
-    needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         distro:
           - ubuntu2004
@@ -56,9 +56,9 @@ jobs:
 
   test2:
     name: molecule(package)
-    needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         distro:
           - ubuntu2004
