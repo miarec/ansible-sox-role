@@ -21,10 +21,12 @@
     copy: false
 
 - name: Run configure | sox
-  command: ./configure --bindir={{ sox_install_dir }} -Wl,-rpath {{ sox_compile_default_library_install_dir }} --with-mp3 {{ _configure_args }}
+  command: ./configure --bindir={{ sox_install_dir }} --with-mp3 {{ _configure_args }}
   args:
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
+  environment:
+    LDFLAGS: "-Wl,-rpath {{ sox_compile_default_library_install_dir }}"
 
 - name: Run make | sox
   command: make -j{{ ansible_processor_cores + 1 }}
