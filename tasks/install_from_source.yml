@@ -26,7 +26,7 @@
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
   environment:
-    LDFLAGS: "-Wl,-rpath {{ sox_compile_default_library_install_dir }}"
+    LDFLAGS: "-Wl,-rpath={{ sox_compile_default_library_install_dir }}"
 
 - name: Run make | sox
   command: make -j{{ ansible_processor_cores + 1 }}
