@@ -10,10 +10,10 @@
     # package `sox` requires `lame-libs`, `libmad`, `wavpack`, `libao`, and `opus`
     # on RHEL8, they would be available via `rhel-8-for-x86_64-appstream-rpms`
     # These are not available on UBI8, installing from CentOS8-appstream repo
-    - name: Install dependencies from CentOS Repositories | RHEL 8
+    - name: Install dependencies from CentOS Repositories | RHEL 8+
       when:
        - ansible_distribution == "RedHat"
-       - ansible_distribution_major_version == "8"
+       - ansible_distribution_major_version >= "8"
       block:
 
         - set_fact:
@@ -33,6 +33,27 @@
                 repo: appstream
               - name: opus
                 repo: appstream
+            when: ansible_distribution_major_version == "8"
+
+        - set_fact:
+            _tmp_repos:
+              - name: appstream
+                url: https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/
+                gpg: http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-Official
+
+            _tmp_packages:
+              - name: lame-libs
+                repo: appstream
+              - name: libmad
+                repo: appstream
+              - name: wavpack
+                repo: appstream
+              - name: libao
+                repo: appstream
+              - name: twolame-libs
+                repo: appstream
+
+            when: ansible_distribution_major_version == "9"
 
         - name: Add Temporary Repositories | RHEL 8
           yum_repository:
