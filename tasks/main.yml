@@ -1,6 +1,6 @@
 ---
-# Prepare for ansible run
-- import_tasks: preflight.yml
+- name: Prepare for ansible run
+  import_tasks: preflight.yml
 
 # Install Sox and libraries from package when enabled
 - name: Install from pacakage.
@@ -13,18 +13,19 @@
         - ansible_os_family == "RedHat"
         - ansible_distribution_major_version == "7"
 
-
-    - import_tasks: install_from_package.yml
+    - name: Install from Package
+      import_tasks: install_from_package.yml
       become: true
 
 # Install Sox and libraries from source when enabled
 - name: Install from source.
+  when: sox_install_from_source|bool
   block:
-    # Verify variables are present
-    - import_tasks: check_vars.yml
+    - name: Verify variables are present
+      import_tasks: check_vars.yml
 
-    # Instal Dependencies for downloading and compiling from source
-    - import_tasks: dependencies.yml
+    - name: Instal Dependencies for downloading and compiling from source
+      import_tasks: dependencies.yml
       become: true
 
     # ----------------------------------
@@ -40,13 +41,15 @@
         loop_var: outer_item
 
     - name: Install optional libraries.
+      when: sox_compile_optional_formats_config|length > 0
       block:
-        - set_fact:
+        - name: Set _optional_libraries
+          set_fact:
             _optional_libraries: []
 
         - name: Extract list of optional libraries from `sox_compile_optional_formats_config`.
           set_fact:
-            _optional_libraries: "{{ _optional_libraries + item.value.libraries  }}"
+            _optional_libraries: "{{ _optional_libraries + item.value.libraries }}"
           with_dict: "{{ sox_compile_optional_formats_config }}"
           loop_control:
             label: "{{ item.key }}"
@@ -61,7 +64,6 @@
             loop_var: outer_item
           when: outer_item.key in _optional_libraries
 
-      when: sox_compile_optional_formats_config|length > 0
 
     # ----------------------------------
     # Sox
@@ -74,8 +76,10 @@
       failed_when: false
 
     - name: Install sox from source.
+      when: _sox_exists.rc != 0
       block:
-        - set_fact:
+        - name: Set _configure_args
+          set_fact:
             _configure_args: []
 
         - name: Extract configure arguments from "sox_compile_optional_formats_config" | sox
@@ -89,8 +93,5 @@
           set_fact:
             _configure_args: "{{ _configure_args | join(' ') }} {{ sox_compile_optional_configure_args | join (' ') }}"
 
-        - include_tasks: install_from_source.yml
-
-      when: _sox_exists.rc != 0
-
-  when: sox_install_from_source|bool
+        - name: Install from source
+          include_tasks: install_from_source.yml

@@ -1,5 +1,5 @@
 ---
-- name: check if {{ library_config.key }} installed
+- name: Check if {{ library_config.key }} installed
   stat:
     path: "{{ library_config.value.install_dir }}/{{ library_config.value.library_file }}"
   register: _library_exists
@@ -8,14 +8,16 @@
   failed_when: false
 
 - name: Install Library when not already installed
+  when: not _library_exists.stat.exists
   block:
-    - name: download tarball | {{ library_config.key }}
+    - name: Download tarball | {{ library_config.key }}
       get_url:
         url: "{{ library_config.value.download_url }}"
         dest: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}.tar.gz"
         checksum: "{{ library_config.value.download_checksum | default(omit) }}"
+        mode: 0644
 
-    - name: extract tarball | {{ library_config.key }}
+    - name: Extract tarball | {{ library_config.key }}
       unarchive:
         src: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}.tar.gz"
         dest: "{{ library_config.value.download_dir }}"
@@ -23,7 +25,8 @@
         copy: false
 
     # When library is libmad, addiotnal steps are needed
-    - include_tasks: configure_libmad.yml
+    - name: Include Libmad configuration
+      include_tasks: configure_libmad.yml
       vars:
         libmad_tmp_dir: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}"
       when: library_config.key == "libmad"
@@ -48,7 +51,7 @@
         chdir: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}"
         creates: "{{ library_config.value.install_dir }}/{{ library_config.value.library_file }}"
       notify:
-        - reload ldconfig
+        - Reload ldconfig
 
     - name: Clean up the source files | {{ library_config.key }}
       file:
@@ -58,5 +61,3 @@
         - "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}.tar.gz"
         - "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}"
       when: library_config.value.download_cleanup | default(true)
-
-  when: not _library_exists.stat.exists

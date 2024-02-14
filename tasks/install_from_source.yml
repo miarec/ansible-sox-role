@@ -1,5 +1,5 @@
 ---
-- name: set checksum | sox
+- name: Set checksum | sox
   set_fact:
     sox_checksum: "sha1:{{ sox_checksums[sox_version] }}"
   when:
@@ -7,13 +7,14 @@
     - sox_checksum is not defined
     - sox_version in sox_checksums
 
-- name: download tarball | sox
+- name: Download tarball | sox
   get_url:
     url: "{{ sox_download_url }}"
     dest: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
-    checksum: "{{ sox_checksum|default(omit) }}"
+    checksum: "{{ sox_checksum | default(omit) }}"
+    mode: 0644
 
-- name: extract tarball | sox
+- name: Extract tarball | sox
   unarchive:
     src: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     dest: "{{ sox_download_dir }}"
@@ -40,7 +41,7 @@
     chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
     creates: "{{ sox_install_dir }}/sox"
   notify:
-    - reload ldconfig
+    - Reload ldconfig
   become: true
 
 - name: Clean up the source files | sox
