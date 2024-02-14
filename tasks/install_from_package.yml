@@ -1,8 +1,9 @@
 ---
 - name: Install dependencies
-  yum:
+  package:
     name: "{{ item }}"
     state: present
+    update_cache: true
   with_items: "{{ sox_package_dependencies }}"
 
 - name: Install EPEL | RedHat
@@ -24,6 +25,7 @@
   package:
     name: "{{ item }}"
     state: present
+    update_cache: true
   with_items: "{{ sox_package_base }}"
 
 # Install additional pacakges for optional audio formats.

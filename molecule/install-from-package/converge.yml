@@ -75,17 +75,6 @@
           loop_control:
             label: "{{ item.name }}"
 
-
-
-    - name: Install prerequisites
-      block:
-        - name: Update apt cache
-          apt:
-            update_cache: true
-            cache_valid_time: 600
-          changed_when: false
-          when: ansible_os_family == "Debian"
-
   roles:
     - role: ansible-sox-role
       tags:
