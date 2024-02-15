@@ -1,6 +1,11 @@
 ---
-sox_package_dependencies: []
+## Package Installation Options
+sox_package_base:
+  - sox
+  - libsox-fmt-base
+  - libsox-fmt-mp3
 
+## Source Installation Options
 sox_compile_dependencies:
   - gcc
   - make

@@ -2,13 +2,7 @@
 ## Installation options
 sox_install_from_source: true  # If true, the source for the version will be downloaded and compiled
 
-## Package Installation Options
-sox_package_base:
-  - sox
-  - libsox-fmt-base
-  - libsox-fmt-mp3
-
-
+# ## Package Installation Options
 sox_package_optional_formats_config: {}
 # Supply dictionary of configration data that will be used to
 # install optional formats

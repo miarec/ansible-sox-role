@@ -1,4 +1,4 @@
 ---
-- name: reload ldconfig
+- name: Reload ldconfig
   command: ldconfig
   become: true
