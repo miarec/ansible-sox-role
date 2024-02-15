@@ -48,9 +48,7 @@ MOLECULE_DISTR0=centos7 molecule test -s install-from-package
    - Tested distros
     - `ubuntu2204`
     - `ubuntu2004`
-    - `centos7`
     - `rockylinux8`
     - `rockylinx9`
-    - `rhel7`
     - `rhel8`
     - `rhel9`

@@ -7,7 +7,8 @@ Ansible role for installation of Sox, and associated libraries.   Sox can be ins
 
 ### Installation varaiables
   - `sox_install_from_source` when true, libraries and sox will be installed from source, `default = true`
-  > **_NOTE:_** package installation is not supported on centos7 hosts.  Sox has to be compiled to support mp3 on Centos7
+
+  > **_NOTE:_**  Sox has to be compiled to support mp3 on CentOS7/RHEL7
 
 
 
