@@ -8,8 +8,8 @@
         sox_install_from_source: false
 
     # package `sox` requires `lame-libs`, `libmad`, `wavpack`, `libao`, and `opus`
-    # on RHEL8, they would be available via `rhel-8-for-x86_64-appstream-rpms`
-    # These are not available on UBI8, installing from CentOS8-appstream repo
+    # on RHEL8/9, they would be available via `rhel-X-for-x86_64-appstream-rpms`
+    # These are not available on UBI8/9, installing from CentOS-appstream repo
     - name: Install dependencies from CentOS Repositories | RHEL 8+
       when:
        - ansible_distribution == "RedHat"
@@ -33,7 +33,7 @@
                 repo: appstream
               - name: opus
                 repo: appstream
-            when: ansible_distribution_major_version == "8"
+          when: ansible_distribution_major_version == "8"
 
         - set_fact:
             _tmp_repos:
@@ -53,9 +53,9 @@
               - name: twolame-libs
                 repo: appstream
 
-            when: ansible_distribution_major_version == "9"
+          when: ansible_distribution_major_version == "9"
 
-        - name: Add Temporary Repositories | RHEL 8
+        - name: Add Temporary Repositories | RHEL 8+
           yum_repository:
               name: "{{ item.name }}"
               description: "Centos {{ ansible_distribution_major_version }} - {{ item.name }}"
@@ -65,7 +65,7 @@
           loop_control:
             label: "{{ item.name }}"
 
-        - name: Install missing packages | RHEL 8
+        - name: Install missing packages | RHEL 8+
           yum:
             name: "{{ item.name }}"
             state: present
