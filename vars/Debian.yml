@@ -1,6 +1,5 @@
 ---
 ## Package Installation Options
-# sox_package_dependencies: []
 sox_package_base:
   - sox
   - libsox-fmt-base
