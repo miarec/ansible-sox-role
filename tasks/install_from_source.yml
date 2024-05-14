@@ -21,7 +21,7 @@
 # This step will create a direcoty specific to this role to extract files to
 - name: Create directory for extracted files
   file:
-    path: "{{ sox_download_dir }}/sox-{{ sox_version }}"
+    path: "{{ sox_download_dir }}/sox"
     state: directory
     mode: u=rwX,g=rX,o=rX
   register: _extract_dir
