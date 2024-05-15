@@ -14,31 +14,43 @@
     checksum: "{{ sox_checksum | default(omit) }}"
     mode: 0644
 
+# The unarchive must change the permissions of the destination folder when mode parameter is supplied.
+# But it behaves differently with tar.gz and zip archives.
+# When extracting tar.gz, it doesn't touch the destination folder's permissions.
+# While in case of extracting zip into something like /tmp/ with mode: 755, it overrides the permissions of /tmp to 755.
+# This step will create a direcoty specific to this role to extract files to
+- name: Create directory for extracted files
+  file:
+    path: "{{ sox_download_dir }}/sox"
+    state: directory
+    mode: u=rwX,g=rX,o=rX
+  register: _extract_dir
+
 - name: Extract tarball | sox
   unarchive:
     src: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
-    dest: "{{ sox_download_dir }}"
-    creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/configure"
+    dest: "{{ _extract_dir.path }}"
+    creates: "{{ _extract_dir.path }}/sox-{{ sox_version }}/configure"
     copy: false
 
 - name: Run configure | sox
   command: ./configure --bindir={{ sox_install_dir }} --with-mp3 {{ _configure_args }}
   args:
-    chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
-    creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/Makefile"
+    chdir: "{{ _extract_dir.path }}/sox-{{ sox_version }}"
+    creates: "{{ _extract_dir.path }}/sox-{{ sox_version }}/Makefile"
   environment:
     LDFLAGS: "-Wl,-rpath={{ sox_compile_default_library_install_dir }}"
 
 - name: Run make | sox
   command: make -j{{ ansible_processor_cores + 1 }}
   args:
-    chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
-    creates: "{{ sox_download_dir }}/sox-{{ sox_version }}/src/sox"
+    chdir: "{{ _extract_dir.path }}/sox-{{ sox_version }}"
+    creates: "{{ _extract_dir.path }}/sox-{{ sox_version }}/src/sox"
 
 - name: Run make install | sox
   command: make install
   args:
-    chdir: "{{ sox_download_dir }}/sox-{{ sox_version }}"
+    chdir: "{{ _extract_dir.path }}/sox-{{ sox_version }}"
     creates: "{{ sox_install_dir }}/sox"
   notify:
     - Reload ldconfig
@@ -50,5 +62,5 @@
     state: absent
   with_items:
     - "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
-    - "{{ sox_download_dir }}/sox-{{ sox_version }}"
+    - "{{ _extract_dir.path }}"
   when: sox_cleanup_downloads|bool
