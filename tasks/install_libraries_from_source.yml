@@ -15,7 +15,7 @@
         url: "{{ library_config.value.download_url }}"
         dest: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}.tar.gz"
         checksum: "{{ library_config.value.download_checksum | default(omit) }}"
-        mode: 0644
+        mode: "0644"
 
     - name: Extract tarball | {{ library_config.key }}
       unarchive:
@@ -40,7 +40,7 @@
         LD_LIBRARY_PATH: "{{ library_config.value.install_dir }}"
 
     - name: Run make | {{ library_config.key }}
-      command: make -j{{ ansible_processor_cores + 1 }}
+      command: make -j{{ ansible_facts['processor_cores'] + 1 }}
       args:
         chdir: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}"
 

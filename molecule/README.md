@@ -5,24 +5,20 @@ This will test the role installing a specific version of Sox from source
 
 Run Molecule test
 ```
-molecule test
+uv run molecule test
 ```
 
 Run test with variable example
 ```
-MOLECULE_DISTRO=centos7 MOLECULE_SOX_VERSION=14.4.2 molecule test
+MOLECULE_DISTRO=rockylinux9 MOLECULE_SOX_VERSION=14.4.2 uv run molecule test
 ```
 
 ### Molecule variables
- - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2204`
-   - Tested distros;
+ - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2404`
+    List of tested distros
     - `ubuntu2204`
-    - `ubuntu2004`
-    - `centos7`
-    - `rockylinux8`
-    - `rockylinx9`
-    - `rhel7`
-    - `rhel8`
+    - `ubuntu2404`
+    - `rockylinux9`
     - `rhel9`
  - `MOLECULE_SOX_VERSION` defines variable `sox_version`, default `14.4.2`
  - `MOLECULE_LIBMAD_VERSION` defines variable `libmad_version`, default `0.15.1b`
@@ -35,21 +31,19 @@ This will test installing Sox from package
 
 Run Molecule test
 ```
-molecule test -s install-from-package
+uv run molecule test -s install-from-package
 ```
 
 Run test with variable example
 ```
-MOLECULE_DISTR0=centos7 molecule test -s install-from-package
+MOLECULE_DISTRO=rockylinux9 uv run molecule test -s install-from-package
 ```
 
 ### Molecule variables
- - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2204`
+ - `MOLECULE_DISTRO` OS of docker container to test, default `ubuntu2404`
    - Tested distros
     - `ubuntu2204`
-    - `ubuntu2004`
-    - `rockylinux8`
-    - `rockylinx9`
-    - `rhel8`
+    - `ubuntu2404`
+    - `rockylinux9`
     - `rhel9`
  - `MOLECULE_ANSIBLE_VERBOSITY` 0-3 used for troubleshooting, will set verbosity of ansible output, same as `-vvv`, default `0`

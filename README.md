@@ -5,10 +5,8 @@ Ansible role for installation of Sox, and associated libraries.   Sox can be ins
 
 ## Role Variables
 
-### Installation varaiables
+### Installation variables
   - `sox_install_from_source` when true, libraries and sox will be installed from source, `default = true`
-
-  > **_NOTE:_**  Sox has to be compiled to support mp3 on CentOS7/RHEL7
 
 
 
@@ -182,4 +180,43 @@ sox_compile_optional_library_config:
     - role: 'sox'
   tags: 'sox'
 
+```
+
+## Testing
+
+This role uses [Molecule](https://molecule.readthedocs.io/) with Docker for testing.
+[uv](https://docs.astral.sh/uv/) is used for dependency management.
+
+### Prerequisites
+
+- Docker
+- uv (install via `curl -LsSf https://astral.sh/uv/install.sh | sh`)
+
+### Running Tests
+
+```bash
+# Run full test suite
+uv run molecule test
+
+# Test against specific distro
+MOLECULE_DISTRO=ubuntu2404 uv run molecule test
+MOLECULE_DISTRO=rockylinux9 uv run molecule test
+
+# Run install-from-package scenario
+uv run molecule test -s install-from-package
+```
+
+### Available Distros
+
+| Distribution   | Variable Value  |
+|----------------|-----------------|
+| Ubuntu 22.04   | `ubuntu2204`    |
+| Ubuntu 24.04   | `ubuntu2404`    |
+| Rocky Linux 9  | `rockylinux9`   |
+| RHEL 9         | `rhel9`         |
+
+### Linting
+
+```bash
+uv run ansible-lint
 ```
