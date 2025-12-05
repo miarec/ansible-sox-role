@@ -6,7 +6,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 def test_bins(host):
     bins = [
-        "/usr/local/bin/sox"
+        "/usr/bin/sox"
     ]
 
     for bin in bins:
@@ -16,7 +16,7 @@ def test_bins(host):
 
 def test_supported_formats(host):
 
-    help_output = host.run('/usr/local/bin/sox --help | grep "AUDIO FILE FORMATS:"')
+    help_output = host.run('/usr/bin/sox --help | grep "AUDIO FILE FORMATS:"')
 
     assert help_output.rc == 0 , "AUDIO_FILE_FORMATS is missing in sox --help output"
 
@@ -24,4 +24,5 @@ def test_supported_formats(host):
     supported_formats = help_output.stdout.split(":")[1].split()
 
     assert "mp3" in supported_formats
+    assert "ogg" in supported_formats
     assert "wav" in supported_formats

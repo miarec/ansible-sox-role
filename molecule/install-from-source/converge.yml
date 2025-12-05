@@ -13,5 +13,6 @@
 
   roles:
     - role: ansible-sox-role
+      sox_install_from_source: true
       tags:
         - sox

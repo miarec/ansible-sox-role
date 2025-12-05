@@ -1,6 +1,6 @@
 ---
 ## Installation options
-sox_install_from_source: true  # If true, the source for the version will be downloaded and compiled
+sox_install_from_source: false  # If true, the source for the version will be downloaded and compiled
 
 # ## Package Installation Options
 sox_package_optional_formats_config: {}
