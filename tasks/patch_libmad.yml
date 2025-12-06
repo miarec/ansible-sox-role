@@ -1,5 +1,5 @@
 ---
-# create NEWS, AUTHORS and ChangeLog. These files are requires for "autoreconf -i" command
+# create NEWS, AUTHORS and ChangeLog. These files are required for "autoreconf -i" command
 - name: Create NEWS file | libmad
   command: "touch {{ libmad_tmp_dir }}/NEWS"
   args:

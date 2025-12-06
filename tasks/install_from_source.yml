@@ -12,7 +12,7 @@
     url: "{{ sox_download_url }}"
     dest: "{{ sox_download_dir }}/sox-{{ sox_version }}.tar.gz"
     checksum: "{{ sox_checksum | default(omit) }}"
-    mode: 0644
+    mode: "0644"
 
 # The unarchive must change the permissions of the destination folder when mode parameter is supplied.
 # But it behaves differently with tar.gz and zip archives.
@@ -42,7 +42,7 @@
     LDFLAGS: "-Wl,-rpath={{ sox_compile_default_library_install_dir }}"
 
 - name: Run make | sox
-  command: make -j{{ ansible_processor_cores + 1 }}
+  command: make -j{{ ansible_facts['processor_cores'] + 1 }}
   args:
     chdir: "{{ _extract_dir.path }}/sox-{{ sox_version }}"
     creates: "{{ _extract_dir.path }}/sox-{{ sox_version }}/src/sox"

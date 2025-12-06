@@ -6,18 +6,37 @@
     update_cache: true
   with_items: "{{ sox_package_dependencies }}"
 
+# Enable CRB repo for EL8+ (Rocky Linux, AlmaLinux) - required for libmad
+- name: Enable CRB repository | EL8+
+  community.general.dnf_config_manager:
+    name: crb
+    state: enabled
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution'] in ["Rocky", "AlmaLinux"]
+    - ansible_facts['distribution_major_version'] | int >= 8
+
+# Enable CodeReady Builder repo for RHEL 8+ - required for libmad
+- name: Enable CodeReady Builder repository | RHEL 8+
+  community.general.rhsm_repository:
+    name: codeready-builder-for-rhel-{{ ansible_facts['distribution_major_version'] }}-{{ ansible_architecture }}-rpms
+    state: enabled
+  when:
+    - ansible_facts['distribution'] == "RedHat"
+    - ansible_facts['distribution_major_version'] | int >= 8
+
 - name: Install EPEL | RedHat
   when:
-    - ansible_distribution == "RedHat"
+    - ansible_facts['distribution'] == "RedHat"
   block:
     - name: Import EPEL GPG key | RedHat
       rpm_key:
-        key: "http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+        key: "https://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_facts['distribution_major_version'] }}"
         state: present
 
     - name: Install EPEL | RedHat
       package:
-        name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+        name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm"
         state: present
 
 # Install Sox from package

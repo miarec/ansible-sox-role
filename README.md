@@ -5,10 +5,8 @@ Ansible role for installation of Sox, and associated libraries.   Sox can be ins
 
 ## Role Variables
 
-### Installation varaiables
-  - `sox_install_from_source` when true, libraries and sox will be installed from source, `default = true`
-
-  > **_NOTE:_**  Sox has to be compiled to support mp3 on CentOS7/RHEL7
+### Installation variables
+  - `sox_install_from_source` when true, libraries and sox will be installed from source, `default = false`
 
 
 
@@ -105,81 +103,109 @@ sox_compile_optional_library_config:
 - name: Install Sox from package
   hosts:
     - all
-  pre_tasks:
-    - set_fact:
-        sox_install_from_source: false
   become: true
   roles:
     - role: 'sox'
   tags: 'sox'
 ```
 
-### Install from pacakage with optional formats
+### Install from package with optional formats
 ```yaml
 - name: Install Sox from package with OSS format
   hosts:
     - all
-  pre_tasks:
-    - set_fact:
-        sox_install_from_source: false
-        sox_package_optional_formats_config:
-          oss:
-            packages: [libsox-fmt-oss]
   become: true
   roles:
     - role: 'sox'
+      sox_package_optional_formats_config:
+        oss:
+          packages: [libsox-fmt-oss]
   tags: 'sox'
 ```
 
 ### Install from source
 ```yaml
-- name: Install Sox from source.
+- name: Install Sox from source
   hosts:
     - all
-  pre_tasks:
-    - set_fact:
-        sox_install_from_source: true
   become: true
   roles:
     - role: 'sox'
+      sox_install_from_source: true
   tags: 'sox'
 ```
 
 ### Install from source with optional formats
 ```yaml
-- name: Install Sox from source with OGG format.
+- name: Install Sox from source with OGG format
   hosts:
     - all
-  pre_tasks:
-    - set_fact:
-        sox_install_from_source: true
-        sox_version: 14.4.2
-        sox_compile_optional_formats_config:
-          ogg:
-            configure_args: "--with-oggvorbis"
-            libraries: [libogg, libvorbis]
-        sox_compile_optional_library_config:
-          libogg:
-            version: 1.3.3
-            download_url: "http://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.3.tar.gz"
-            download_dir: "{{ sox_compile_default_library_download_dir }}"
-            download_checksum: "sha1:28ba40fd2e2d41988f658a0016fa7b534e509bc0"
-            download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
-            configure_args:
-            install_dir: "{{ sox_compile_default_library_install_dir }}"
-            library_file: "libogg.a"
-          libvorbis:
-            version: 1.3.6
-            download_url: "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-1.3.6.tar.xz"
-            download_dir: "{{ sox_compile_default_library_download_dir }}"
-            download_checksum: "sha1:237e3d1c66452734fd9b32f494f44238b4f0185e"
-            download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
-            configure_args: "--bindir={{ sox_compile_default_library_install_dir }} --libdir={{ sox_compile_default_library_install_dir }}"
-            install_dir: "{{ sox_compile_default_library_install_dir }}"
-            library_file: "libvorbis.a"
   become: true
   roles:
     - role: 'sox'
+      sox_install_from_source: true
+      sox_version: 14.4.2
+      sox_compile_optional_formats_config:
+        ogg:
+          configure_args: "--with-oggvorbis"
+          libraries: [libogg, libvorbis]
+      sox_compile_optional_library_config:
+        libogg:
+          version: 1.3.3
+          download_url: "http://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.3.tar.gz"
+          download_dir: "{{ sox_compile_default_library_download_dir }}"
+          download_checksum: "sha1:28ba40fd2e2d41988f658a0016fa7b534e509bc0"
+          download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
+          configure_args:
+          install_dir: "{{ sox_compile_default_library_install_dir }}"
+          library_file: "libogg.a"
+        libvorbis:
+          version: 1.3.6
+          download_url: "https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-1.3.6.tar.xz"
+          download_dir: "{{ sox_compile_default_library_download_dir }}"
+          download_checksum: "sha1:237e3d1c66452734fd9b32f494f44238b4f0185e"
+          download_cleanup: "{{ sox_compile_default_library_download_cleanup }}"
+          configure_args: "--bindir={{ sox_compile_default_library_install_dir }} --libdir={{ sox_compile_default_library_install_dir }}"
+          install_dir: "{{ sox_compile_default_library_install_dir }}"
+          library_file: "libvorbis.a"
   tags: 'sox'
+```
 
+## Testing
+
+This role uses [Molecule](https://molecule.readthedocs.io/) with Docker for testing.
+[uv](https://docs.astral.sh/uv/) is used for dependency management.
+
+### Prerequisites
+
+- Docker
+- uv (install via `curl -LsSf https://astral.sh/uv/install.sh | sh`)
+
+### Running Tests
+
+```bash
+# Run default scenario (install from package)
+uv run molecule test
+
+# Run install-from-source scenario
+uv run molecule test -s install-from-source
+
+# Test against specific distro
+MOLECULE_DISTRO=ubuntu2404 uv run molecule test
+MOLECULE_DISTRO=rockylinux9 uv run molecule test
+```
+
+### Available Distros
+
+| Distribution   | Variable Value  |
+|----------------|-----------------|
+| Ubuntu 22.04   | `ubuntu2204`    |
+| Ubuntu 24.04   | `ubuntu2404`    |
+| Rocky Linux 9  | `rockylinux9`   |
+| RHEL 9         | `rhel9`         |
+
+### Linting
+
+```bash
+uv run ansible-lint
 ```

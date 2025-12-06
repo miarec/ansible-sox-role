@@ -15,7 +15,7 @@
         url: "{{ library_config.value.download_url }}"
         dest: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}.tar.gz"
         checksum: "{{ library_config.value.download_checksum | default(omit) }}"
-        mode: 0644
+        mode: "0644"
 
     - name: Extract tarball | {{ library_config.key }}
       unarchive:
@@ -24,12 +24,33 @@
         creates: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}/configure"
         copy: false
 
-    # When library is libmad, addiotnal steps are needed
-    - name: Include Libmad configuration
-      include_tasks: configure_libmad.yml
+    # libmad requires patching and running autoreconf
+    - name: Patch libmad
+      include_tasks: patch_libmad.yml
       vars:
         libmad_tmp_dir: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}"
       when: library_config.key == "libmad"
+
+    # Update config.guess and config.sub to support aarch64/arm64 architecture
+    # lame and libmad ship with 2003 versions that don't recognize modern ARM CPUs
+    - name: Get automake data directory | {{ library_config.key }}
+      command: automake --print-libdir
+      register: _automake_dir
+      changed_when: false
+
+    - name: Copy config.guess from automake | {{ library_config.key }}
+      copy:
+        src: "{{ _automake_dir.stdout }}/config.guess"
+        dest: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}/config.guess"
+        mode: "0755"
+        remote_src: true
+
+    - name: Copy config.sub from automake | {{ library_config.key }}
+      copy:
+        src: "{{ _automake_dir.stdout }}/config.sub"
+        dest: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}/config.sub"
+        mode: "0755"
+        remote_src: true
 
     - name: Run configure | {{ library_config.key }}
       command: ./configure {{ library_config.value.configure_args }}
@@ -40,7 +61,7 @@
         LD_LIBRARY_PATH: "{{ library_config.value.install_dir }}"
 
     - name: Run make | {{ library_config.key }}
-      command: make -j{{ ansible_processor_cores + 1 }}
+      command: make -j{{ ansible_facts['processor_cores'] + 1 }}
       args:
         chdir: "{{ library_config.value.download_dir }}/{{ library_config.key }}-{{ library_config.value.version }}"
 
