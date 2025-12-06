@@ -48,7 +48,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Run molecule test
-        run: uv run molecule test
+        run: uv run molecule test -s install-from-source
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
@@ -74,7 +74,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Run molecule tests, install from Package
-        run: uv run molecule test -s install-from-package
+        run: uv run molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
