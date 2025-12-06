@@ -31,7 +31,7 @@
   block:
     - name: Import EPEL GPG key | RedHat
       rpm_key:
-        key: "http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_facts['distribution_major_version'] }}"
+        key: "https://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_facts['distribution_major_version'] }}"
         state: present
 
     - name: Install EPEL | RedHat
