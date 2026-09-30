@@ -7,6 +7,18 @@
   with_items: "{{ sox_package_dependencies }}"
 
 # Enable CRB repo for EL8+ - required for libmad
+# Rocky Linux 8 names this repo "powertools"; Rocky Linux 9 renamed it to "crb"
+- name: Enable PowerTools repository | Rocky Linux 8
+  ini_file:
+    dest: /etc/yum.repos.d/Rocky-PowerTools.repo
+    section: powertools
+    option: enabled
+    value: "1"
+    mode: "0644"
+  when:
+    - ansible_facts['distribution'] == "Rocky"
+    - ansible_facts['distribution_major_version'] | int == 8
+
 - name: Enable CRB repository | Rocky Linux
   ini_file:
     dest: /etc/yum.repos.d/rocky.repo
@@ -16,7 +28,7 @@
     mode: "0644"
   when:
     - ansible_facts['distribution'] == "Rocky"
-    - ansible_facts['distribution_major_version'] | int >= 8
+    - ansible_facts['distribution_major_version'] | int >= 9
 
 - name: Enable CRB repository | AlmaLinux
   ini_file:
