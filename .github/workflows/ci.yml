@@ -37,6 +37,7 @@ jobs:
         distro:
           - ubuntu2204
           - ubuntu2404
+          - rockylinux8
           - rockylinux9
           - rhel9
 
@@ -63,6 +64,7 @@ jobs:
         distro:
           - ubuntu2204
           - ubuntu2404
+          - rockylinux8
           - rockylinux9
           - rhel9
 

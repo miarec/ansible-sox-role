@@ -201,6 +201,7 @@ MOLECULE_DISTRO=rockylinux9 uv run molecule test
 |----------------|-----------------|
 | Ubuntu 22.04   | `ubuntu2204`    |
 | Ubuntu 24.04   | `ubuntu2404`    |
+| Rocky Linux 8  | `rockylinux8`   |
 | Rocky Linux 9  | `rockylinux9`   |
 | RHEL 9         | `rhel9`         |
 

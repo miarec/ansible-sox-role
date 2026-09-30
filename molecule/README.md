@@ -18,6 +18,7 @@ MOLECULE_DISTRO=rockylinux9 MOLECULE_SOX_VERSION=14.4.2 uv run molecule test
     List of tested distros
     - `ubuntu2204`
     - `ubuntu2404`
+    - `rockylinux8`
     - `rockylinux9`
     - `rhel9`
  - `MOLECULE_SOX_VERSION` defines variable `sox_version`, default `14.4.2`
@@ -44,6 +45,7 @@ MOLECULE_DISTRO=rockylinux9 uv run molecule test -s install-from-package
    - Tested distros
     - `ubuntu2204`
     - `ubuntu2404`
+    - `rockylinux8`
     - `rockylinux9`
     - `rhel9`
  - `MOLECULE_ANSIBLE_VERBOSITY` 0-3 used for troubleshooting, will set verbosity of ansible output, same as `-vvv`, default `0`

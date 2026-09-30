@@ -29,7 +29,7 @@ uv run molecule test -s install-from-source
 ```
 
 ### Molecule Environment Variables
-- `MOLECULE_DISTRO`: Target OS (ubuntu2204, ubuntu2404, rockylinux9, rhel9)
+- `MOLECULE_DISTRO`: Target OS (ubuntu2204, ubuntu2404, rockylinux8, rockylinux9, rhel9)
 - `MOLECULE_SOX_VERSION`: Sox version (default: 14.4.2)
 - `MOLECULE_ANSIBLE_VERBOSITY`: 0-3 for ansible output verbosity
 
