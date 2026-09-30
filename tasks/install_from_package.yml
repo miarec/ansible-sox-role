@@ -42,9 +42,10 @@
     - ansible_facts['distribution_major_version'] | int >= 8
 
 # For RHEL UBI images that have Rocky repos configured, skip RHEL CRB
+# Rocky Linux 8 names this repo "powertools"; Rocky Linux 9 renamed it to "crb"
 - name: Check if Rocky CRB repo exists | RHEL
   stat:
-    path: /etc/yum.repos.d/rocky-crb.repo
+    path: "/etc/yum.repos.d/{{ 'rocky-powertools.repo' if ansible_facts['distribution_major_version'] | int == 8 else 'rocky-crb.repo' }}"
   register: rocky_crb_repo
   when:
     - ansible_facts['distribution'] == "RedHat"
